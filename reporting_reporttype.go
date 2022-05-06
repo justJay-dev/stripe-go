@@ -26,7 +26,6 @@ type ReportTypeListParams struct {
 // data), and will error when queried without a [live-mode API key](https://stripe.com/docs/keys#test-live-modes).
 type ReportType struct {
 	APIResource
-	Created int64 `json:"created"`
 	// Most recent time for which this Report Type is available. Measured in seconds since the Unix epoch.
 	DataAvailableEnd int64 `json:"data_available_end"`
 	// Earliest time for which this Report Type is available. Measured in seconds since the Unix epoch.

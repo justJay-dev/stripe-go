@@ -57,21 +57,21 @@ const (
 type SubscriptionScheduleListParams struct {
 	ListParams `form:"*"`
 	// Only return subscription schedules that were created canceled the given date interval.
-	CanceledAt int64 `form:"canceled_at"`
+	CanceledAt *int64 `form:"canceled_at"`
 	// Only return subscription schedules that were created canceled the given date interval.
 	CanceledAtRange *RangeQueryParams `form:"canceled_at"`
 	// Only return subscription schedules that completed during the given date interval.
-	CompletedAt int64 `form:"completed_at"`
+	CompletedAt *int64 `form:"completed_at"`
 	// Only return subscription schedules that completed during the given date interval.
 	CompletedAtRange *RangeQueryParams `form:"completed_at"`
 	// Only return subscription schedules that were created during the given date interval.
-	Created int64 `form:"created"`
+	Created *int64 `form:"created"`
 	// Only return subscription schedules that were created during the given date interval.
 	CreatedRange *RangeQueryParams `form:"created"`
 	// Only return subscription schedules for the given customer.
-	Customer string `form:"customer"`
+	Customer *string `form:"customer"`
 	// Only return subscription schedules that were released during the given date interval.
-	ReleasedAt int64 `form:"released_at"`
+	ReleasedAt *int64 `form:"released_at"`
 	// Only return subscription schedules that were released during the given date interval.
 	ReleasedAtRange *RangeQueryParams `form:"released_at"`
 	// Only return subscription schedules that have not started yet.
@@ -103,27 +103,6 @@ type SubscriptionScheduleDefaultSettingsParams struct {
 	InvoiceSettings *SubscriptionScheduleInvoiceSettingsParams `form:"invoice_settings"`
 	// The data with which to automatically create a Transfer for each of the associated subscription's invoices.
 	TransferData *SubscriptionTransferDataParams `form:"transfer_data"`
-}
-
-// SubscriptionSchedulePhaseAddInvoiceItemPriceDataRecurringParams is a structure representing the
-// parameters to create an inline recurring price for a given invoice item.
-type SubscriptionSchedulePhaseAddInvoiceItemPriceDataRecurringParams struct {
-	AggregateUsage  *string `form:"aggregate_usage"`
-	Interval        *string `form:"interval"`
-	IntervalCount   *int64  `form:"interval_count"`
-	TrialPeriodDays *int64  `form:"trial_period_days"`
-	UsageType       *string `form:"usage_type"`
-}
-
-// SubscriptionSchedulePhaseAddInvoiceItemPriceDataParams is a structure representing the parameters
-// to create an inline price for a given invoice item.
-type SubscriptionSchedulePhaseAddInvoiceItemPriceDataParams struct {
-	Currency          *string                                                          `form:"currency"`
-	Product           *string                                                          `form:"product"`
-	Recurring         *SubscriptionSchedulePhaseAddInvoiceItemPriceDataRecurringParams `form:"recurring"`
-	TaxBehavior       *string                                                          `form:"tax_behavior"`
-	UnitAmount        *int64                                                           `form:"unit_amount"`
-	UnitAmountDecimal *float64                                                         `form:"unit_amount_decimal,high_precision"`
 }
 
 // A list of prices and quantities that will generate invoice items appended to the next invoice. You may pass up to 20 items.
@@ -281,7 +260,7 @@ type SubscriptionScheduleDefaultSettings struct {
 	// Define thresholds at which an invoice will be sent, and the subscription advanced to a new billing period
 	BillingThresholds *SubscriptionBillingThresholds `json:"billing_thresholds"`
 	// Either `charge_automatically`, or `send_invoice`. When charging automatically, Stripe will attempt to pay the underlying subscription at the end of each billing cycle using the default source attached to the customer. When sending an invoice, Stripe will email your customer an invoice with payment instructions.
-	CollectionMethod SubscriptionCollectionMethod `json:"collection_method"`
+	CollectionMethod *SubscriptionCollectionMethod `json:"collection_method"`
 	// ID of the default payment method for the subscription schedule. If not set, invoices will use the default payment method in the customer's invoice settings.
 	DefaultPaymentMethod *PaymentMethod `json:"default_payment_method"`
 	// The subscription schedule's default invoice settings.
@@ -326,7 +305,7 @@ type SubscriptionSchedulePhase struct {
 	// Define thresholds at which an invoice will be sent, and the subscription advanced to a new billing period
 	BillingThresholds *SubscriptionBillingThresholds `json:"billing_thresholds"`
 	// Either `charge_automatically`, or `send_invoice`. When charging automatically, Stripe will attempt to pay the underlying subscription at the end of each billing cycle using the default source attached to the customer. When sending an invoice, Stripe will email your customer an invoice with payment instructions.
-	CollectionMethod SubscriptionCollectionMethod `json:"collection_method"`
+	CollectionMethod *SubscriptionCollectionMethod `json:"collection_method"`
 	// ID of the coupon to use during this phase of the subscription schedule.
 	Coupon *Coupon `json:"coupon"`
 	// ID of the default payment method for the subscription schedule. It must belong to the customer associated with the subscription schedule. If not set, invoices will use the default payment method in the customer's invoice settings.

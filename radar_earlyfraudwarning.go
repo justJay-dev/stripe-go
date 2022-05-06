@@ -6,20 +6,6 @@
 
 package stripe
 
-// The type of fraud labelled by the issuer. One of `card_never_received`, `fraudulent_card_application`, `made_with_counterfeit_card`, `made_with_lost_card`, `made_with_stolen_card`, `misc`, `unauthorized_use_of_card`.
-type RadarEarlyFraudWarningFraudType string
-
-// List of values that RadarEarlyFraudWarningFraudType can take
-const (
-	RadarEarlyFraudWarningFraudTypeCardNeverReceived         RadarEarlyFraudWarningFraudType = "card_never_received"
-	RadarEarlyFraudWarningFraudTypeFraudulentCardApplication RadarEarlyFraudWarningFraudType = "fraudulent_card_application"
-	RadarEarlyFraudWarningFraudTypeMadeWithCounterfeitCard   RadarEarlyFraudWarningFraudType = "made_with_counterfeit_card"
-	RadarEarlyFraudWarningFraudTypeMadeWithLostCard          RadarEarlyFraudWarningFraudType = "made_with_lost_card"
-	RadarEarlyFraudWarningFraudTypeMadeWithStolenCard        RadarEarlyFraudWarningFraudType = "made_with_stolen_card"
-	RadarEarlyFraudWarningFraudTypeMisc                      RadarEarlyFraudWarningFraudType = "misc"
-	RadarEarlyFraudWarningFraudTypeUnauthorizedUseOfCard     RadarEarlyFraudWarningFraudType = "unauthorized_use_of_card"
-)
-
 // Returns a list of early fraud warnings.
 type RadarEarlyFraudWarningListParams struct {
 	ListParams `form:"*"`
@@ -49,7 +35,7 @@ type RadarEarlyFraudWarning struct {
 	// Time at which the object was created. Measured in seconds since the Unix epoch.
 	Created int64 `json:"created"`
 	// The type of fraud labelled by the issuer. One of `card_never_received`, `fraudulent_card_application`, `made_with_counterfeit_card`, `made_with_lost_card`, `made_with_stolen_card`, `misc`, `unauthorized_use_of_card`.
-	FraudType RadarEarlyFraudWarningFraudType `json:"fraud_type"`
+	FraudType string `json:"fraud_type"`
 	// Unique identifier for the object.
 	ID string `json:"id"`
 	// Has the value `true` if the object exists in live mode or the value `false` if the object exists in test mode.
@@ -64,6 +50,5 @@ type RadarEarlyFraudWarning struct {
 type RadarEarlyFraudWarningList struct {
 	APIResource
 	ListMeta
-	// TODO: rename `Values` to `Data` in a future major version for consistency with other List structs
-	Values []*RadarEarlyFraudWarning `json:"data"`
+	Data []*RadarEarlyFraudWarning `json:"data"`
 }

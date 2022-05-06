@@ -4,7 +4,7 @@
 //
 //
 
-// Package discount provides the discount-related APIs
+// Package discount provides the TODO APIs
 package discount
 
 import (
@@ -13,18 +13,18 @@ import (
 	stripe "github.com/stripe/stripe-go/v72"
 )
 
-// Client is used to invoke discount-related APIs.
+// Client is used to invoke TODO APIs.
 type Client struct {
 	B   stripe.Backend
 	Key string
 }
 
-// Del removes a discount from a customer.
+// Del is the method for the `DELETE /v1/customers/{customer}/discount` API.
 func Del(id string, params *stripe.DiscountParams) (*stripe.Discount, error) {
 	return getC().Del(id, params)
 }
 
-// Del removes a discount from a customer.
+// Del is the method for the `DELETE /v1/customers/{customer}/discount` API.
 func (c Client) Del(id string, params *stripe.DiscountParams) (*stripe.Discount, error) {
 	path := stripe.FormatURLPath("/v1/customers/%s/discount", id)
 	discount := &stripe.Discount{}
@@ -32,12 +32,12 @@ func (c Client) Del(id string, params *stripe.DiscountParams) (*stripe.Discount,
 	return discount, err
 }
 
-// DelSubscription removes a discount from a customer's subscription.
-func DelSubscription(id string, params *stripe.DiscountParams) (*stripe.Discount, error) {
+// DelSub is the method for the `DELETE /v1/subscriptions/{subscription_exposed_id}/discount` API.
+func DelSub(id string, params *stripe.DiscountParams) (*stripe.Discount, error) {
 	return getC().DelSub(id, params)
 }
 
-// DelSub removes a discount from a customer's subscription.
+// DelSub is the method for the `DELETE /v1/subscriptions/{subscription_exposed_id}/discount` API.
 func (c Client) DelSub(id string, params *stripe.DiscountParams) (*stripe.Discount, error) {
 	path := stripe.FormatURLPath("/v1/subscriptions/%s/discount", id)
 	discount := &stripe.Discount{}

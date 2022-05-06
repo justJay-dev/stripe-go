@@ -20,30 +20,6 @@ const (
 	IssuingAuthorizationAuthorizationMethodSwipe       IssuingAuthorizationAuthorizationMethod = "swipe"
 )
 
-// IssuingAuthorizationRequestHistoryViolatedAuthorizationControlEntity is the list of possible values
-// for the entity that owns the authorization control.
-type IssuingAuthorizationRequestHistoryViolatedAuthorizationControlEntity string
-
-// List of values that IssuingAuthorizationRequestHistoryViolatedAuthorizationControlEntity can take.
-const (
-	IssuingAuthorizationRequestHistoryViolatedAuthorizationControlEntityAccount    IssuingAuthorizationRequestHistoryViolatedAuthorizationControlEntity = "account"
-	IssuingAuthorizationRequestHistoryViolatedAuthorizationControlEntityCard       IssuingAuthorizationRequestHistoryViolatedAuthorizationControlEntity = "card"
-	IssuingAuthorizationRequestHistoryViolatedAuthorizationControlEntityCardholder IssuingAuthorizationRequestHistoryViolatedAuthorizationControlEntity = "cardholder"
-)
-
-// IssuingAuthorizationRequestHistoryViolatedAuthorizationControlName is the list of possible values
-// for the name associated with the authorization control.
-type IssuingAuthorizationRequestHistoryViolatedAuthorizationControlName string
-
-// List of values that IssuingAuthorizationRequestHistoryViolatedAuthorizationControlName can take.
-const (
-	IssuingAuthorizationRequestHistoryViolatedAuthorizationControlNameAllowedCategories IssuingAuthorizationRequestHistoryViolatedAuthorizationControlName = "allowed_categories"
-	IssuingAuthorizationRequestHistoryViolatedAuthorizationControlNameBlockedCategories IssuingAuthorizationRequestHistoryViolatedAuthorizationControlName = "blocked_categories"
-	IssuingAuthorizationRequestHistoryViolatedAuthorizationControlNameMaxAmount         IssuingAuthorizationRequestHistoryViolatedAuthorizationControlName = "max_amount"
-	IssuingAuthorizationRequestHistoryViolatedAuthorizationControlNameMaxApprovals      IssuingAuthorizationRequestHistoryViolatedAuthorizationControlName = "max_approvals"
-	IssuingAuthorizationRequestHistoryViolatedAuthorizationControlNameSpendingLimits    IssuingAuthorizationRequestHistoryViolatedAuthorizationControlName = "spending_limits"
-)
-
 // The reason for the approval or decline.
 type IssuingAuthorizationRequestHistoryReason string
 
@@ -82,16 +58,6 @@ const (
 	IssuingAuthorizationVerificationDataCheckMatch       IssuingAuthorizationVerificationDataCheck = "match"
 	IssuingAuthorizationVerificationDataCheckMismatch    IssuingAuthorizationVerificationDataCheck = "mismatch"
 	IssuingAuthorizationVerificationDataCheckNotProvided IssuingAuthorizationVerificationDataCheck = "not_provided"
-)
-
-// The digital wallet used for this authorization. One of `apple_pay`, `google_pay`, or `samsung_pay`.
-type IssuingAuthorizationWalletType string
-
-// List of values that IssuingAuthorizationWalletType can take
-const (
-	IssuingAuthorizationWalletTypeApplePay   IssuingAuthorizationWalletType = "apple_pay"
-	IssuingAuthorizationWalletTypeGooglePay  IssuingAuthorizationWalletType = "google_pay"
-	IssuingAuthorizationWalletTypeSamsungPay IssuingAuthorizationWalletType = "samsung_pay"
 )
 
 // Returns a list of Issuing Authorization objects. The objects are sorted in descending order by creation date, with the most recently created object appearing first.
@@ -244,7 +210,7 @@ type IssuingAuthorization struct {
 	Transactions     []*IssuingTransaction                 `json:"transactions"`
 	VerificationData *IssuingAuthorizationVerificationData `json:"verification_data"`
 	// The digital wallet used for this authorization. One of `apple_pay`, `google_pay`, or `samsung_pay`.
-	Wallet IssuingAuthorizationWalletType `json:"wallet"`
+	Wallet string `json:"wallet"`
 }
 
 // IssuingAuthorizationList is a list of Authorizations as retrieved from a list endpoint.

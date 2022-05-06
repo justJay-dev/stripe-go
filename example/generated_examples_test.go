@@ -40,7 +40,6 @@ import (
 	promotioncode "github.com/stripe/stripe-go/v72/promotioncode"
 	radar_earlyfraudwarning "github.com/stripe/stripe-go/v72/radar/earlyfraudwarning"
 	refund "github.com/stripe/stripe-go/v72/refund"
-	reversal "github.com/stripe/stripe-go/v72/reversal"
 	review "github.com/stripe/stripe-go/v72/review"
 	setupattempt "github.com/stripe/stripe-go/v72/setupattempt"
 	setupintent "github.com/stripe/stripe-go/v72/setupintent"
@@ -59,6 +58,7 @@ import (
 	_ "github.com/stripe/stripe-go/v72/testing"
 	topup "github.com/stripe/stripe-go/v72/topup"
 	transfer "github.com/stripe/stripe-go/v72/transfer"
+	transferreversal "github.com/stripe/stripe-go/v72/transferreversal"
 	usagerecord "github.com/stripe/stripe-go/v72/usagerecord"
 	usagerecordsummary "github.com/stripe/stripe-go/v72/usagerecordsummary"
 	webhookendpoint "github.com/stripe/stripe-go/v72/webhookendpoint"
@@ -88,7 +88,7 @@ func TestChargeCreate(t *testing.T) {
 	params := &stripe.ChargeParams{
 		Amount:      stripe.Int64(2000),
 		Currency:    stripe.String(string(stripe.CurrencyUSD)),
-		Source:      &stripe.SourceParams{Token: stripe.String("tok_xxxx")},
+		Source:      stripe.String("tok_xxxx"),
 		Description: stripe.String("My First Test Charge (created for API docs)"),
 	}
 	result, _ := charge.New(params)
@@ -1028,29 +1028,23 @@ func TestTransferList(t *testing.T) {
 	assert.NotNil(t, result)
 }
 
-func TestReversalCreate(t *testing.T) {
-	params := &stripe.ReversalParams{Amount: stripe.Int64(100)}
-	result, _ := reversal.New(params)
+func TestTransferReversalCreate(t *testing.T) {
+	params := &stripe.TransferReversalParams{Amount: stripe.Int64(100)}
+	result, _ := transferreversal.New(params)
 	assert.NotNil(t, result)
 }
 
-func TestReversalRetrieve(t *testing.T) {
-	params := &stripe.ReversalParams{}
-	result, _ := reversal.Get("trr_xxxxxxxxxxxxx", params)
-	assert.NotNil(t, result)
-}
-
-func TestReversalUpdate(t *testing.T) {
-	params := &stripe.ReversalParams{}
+func TestTransferReversalUpdate(t *testing.T) {
+	params := &stripe.TransferReversalParams{}
 	params.AddMetadata("order_id", "6735")
-	result, _ := reversal.Update("trr_xxxxxxxxxxxxx", params)
+	result, _ := transferreversal.Update("trr_xxxxxxxxxxxxx", params)
 	assert.NotNil(t, result)
 }
 
-func TestReversalList(t *testing.T) {
-	params := &stripe.ReversalListParams{}
+func TestTransferReversalList(t *testing.T) {
+	params := &stripe.TransferReversalListParams{}
 	params.Filters.AddFilter("Limit", "", "3")
-	result := reversal.List(params)
+	result := transferreversal.List(params)
 	assert.NotNil(t, result)
 }
 
@@ -1266,7 +1260,7 @@ func TestTerminalConnectionTokenCreate(t *testing.T) {
 func TestTerminalLocationCreate(t *testing.T) {
 	params := &stripe.TerminalLocationParams{
 		DisplayName: stripe.String("My First Store"),
-		Address: &stripe.AccountAddressParams{
+		Address: &stripe.AddressParams{
 			Line1:      stripe.String("1234 Main Street"),
 			City:       stripe.String("San Francisco"),
 			Country:    stripe.String("US"),
@@ -1365,16 +1359,14 @@ func TestOrderRetrieve(t *testing.T) {
 }
 
 func TestOrderUpdate(t *testing.T) {
-	params := &stripe.OrderUpdateParams{}
+	params := &stripe.OrderParams{}
 	params.AddMetadata("order_id", "6735")
 	result, _ := order.Update("or_xxxxxxxxxxxxx", params)
 	assert.NotNil(t, result)
 }
 
 func TestOrderPay(t *testing.T) {
-	params := &stripe.OrderPayParams{
-		Source: &stripe.SourceParams{Token: stripe.String("tok_xxxx")},
-	}
+	params := &stripe.OrderPayParams{Source: stripe.String("tok_xxxx")}
 	result, _ := order.Pay("or_xxxxxxxxxxxxx", params)
 	assert.NotNil(t, result)
 }
@@ -1404,8 +1396,8 @@ func TestSKUCreate(t *testing.T) {
 		Attributes: map[string]string{"size": "Medium", "gender": "Unisex"},
 		Price:      stripe.Int64(1500),
 		Currency:   stripe.String(string(stripe.CurrencyUSD)),
-		Inventory: &stripe.InventoryParams{
-			Type:     stripe.String(string(stripe.SKUInventoryTypeFinite)),
+		Inventory: &stripe.SKUInventoryParams{
+			Type:     stripe.String("finite"),
 			Quantity: stripe.Int64(500),
 		},
 		Product: stripe.String("prod_xxxxxxxxxxxxx"),

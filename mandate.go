@@ -46,14 +46,14 @@ const (
 )
 
 // The status of the mandate on the Bacs network. Can be one of `pending`, `revoked`, `refused`, or `accepted`.
-type MandatePaymentMethodDetailsBACSDebitNetworkStatus string
+type MandatePaymentMethodDetailsBacsDebitNetworkStatus string
 
-// List of values that MandatePaymentMethodDetailsBACSDebitNetworkStatus can take
+// List of values that MandatePaymentMethodDetailsBacsDebitNetworkStatus can take
 const (
-	MandatePaymentMethodDetailsBACSDebitNetworkStatusAccepted MandatePaymentMethodDetailsBACSDebitNetworkStatus = "accepted"
-	MandatePaymentMethodDetailsBACSDebitNetworkStatusPending  MandatePaymentMethodDetailsBACSDebitNetworkStatus = "pending"
-	MandatePaymentMethodDetailsBACSDebitNetworkStatusRefused  MandatePaymentMethodDetailsBACSDebitNetworkStatus = "refused"
-	MandatePaymentMethodDetailsBACSDebitNetworkStatusRevoked  MandatePaymentMethodDetailsBACSDebitNetworkStatus = "revoked"
+	MandatePaymentMethodDetailsBacsDebitNetworkStatusAccepted MandatePaymentMethodDetailsBacsDebitNetworkStatus = "accepted"
+	MandatePaymentMethodDetailsBacsDebitNetworkStatusPending  MandatePaymentMethodDetailsBacsDebitNetworkStatus = "pending"
+	MandatePaymentMethodDetailsBacsDebitNetworkStatusRefused  MandatePaymentMethodDetailsBacsDebitNetworkStatus = "refused"
+	MandatePaymentMethodDetailsBacsDebitNetworkStatusRevoked  MandatePaymentMethodDetailsBacsDebitNetworkStatus = "revoked"
 )
 
 // The status of the mandate, which indicates whether it can be used to initiate a payment.
@@ -109,16 +109,16 @@ type MandatePaymentMethodDetailsAUBECSDebit struct {
 	// The URL of the mandate. This URL generally contains sensitive information about the customer and should be shared with them exclusively.
 	URL string `json:"url"`
 }
-type MandatePaymentMethodDetailsBACSDebit struct {
+type MandatePaymentMethodDetailsBacsDebit struct {
 	// The status of the mandate on the Bacs network. Can be one of `pending`, `revoked`, `refused`, or `accepted`.
-	NetworkStatus MandatePaymentMethodDetailsBACSDebitNetworkStatus `json:"network_status"`
+	NetworkStatus MandatePaymentMethodDetailsBacsDebitNetworkStatus `json:"network_status"`
 	// The unique reference identifying the mandate on the Bacs network.
 	Reference string `json:"reference"`
 	// The URL that will contain the mandate that the customer has signed.
 	URL string `json:"url"`
 }
 type MandatePaymentMethodDetailsCard struct{}
-type MandatePaymentMethodDetailsSepaDebit struct {
+type MandatePaymentMethodDetailsSEPADebit struct {
 	// The unique reference of the mandate.
 	Reference string `json:"reference"`
 	// The URL of the mandate. This URL generally contains sensitive information about the customer and should be shared with them exclusively.
@@ -128,11 +128,11 @@ type MandatePaymentMethodDetailsUSBankAccount struct{}
 type MandatePaymentMethodDetails struct {
 	ACSSDebit   *MandatePaymentMethodDetailsACSSDebit   `json:"acss_debit"`
 	AUBECSDebit *MandatePaymentMethodDetailsAUBECSDebit `json:"au_becs_debit"`
-	BACSDebit   *MandatePaymentMethodDetailsBACSDebit   `json:"bacs_debit"`
+	BacsDebit   *MandatePaymentMethodDetailsBacsDebit   `json:"bacs_debit"`
 	Card        *MandatePaymentMethodDetailsCard        `json:"card"`
-	SepaDebit   *MandatePaymentMethodDetailsSepaDebit   `json:"sepa_debit"`
+	SEPADebit   *MandatePaymentMethodDetailsSEPADebit   `json:"sepa_debit"`
 	// The type of the payment method associated with this mandate. An additional hash is included on `payment_method_details` with a name matching this value. It contains mandate information specific to the payment method.
-	Type          PaymentMethodType                         `json:"type"`
+	Type          string                                    `json:"type"`
 	USBankAccount *MandatePaymentMethodDetailsUSBankAccount `json:"us_bank_account"`
 }
 type MandateSingleUse struct {

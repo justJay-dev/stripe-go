@@ -64,12 +64,12 @@ func (c Client) Update(id string, params *stripe.SubscriptionParams) (*stripe.Su
 	return subscription, err
 }
 
-// Cancel removes a subscription.
+// Cancel is the method for the `DELETE /v1/subscriptions/{subscription_exposed_id}` API.
 func Cancel(id string, params *stripe.SubscriptionCancelParams) (*stripe.Subscription, error) {
 	return getC().Cancel(id, params)
 }
 
-// Cancel removes a subscription.
+// Cancel is the method for the `DELETE /v1/subscriptions/{subscription_exposed_id}` API.
 func (c Client) Cancel(id string, params *stripe.SubscriptionCancelParams) (*stripe.Subscription, error) {
 	path := stripe.FormatURLPath("/v1/subscriptions/%s", id)
 	subscription := &stripe.Subscription{}

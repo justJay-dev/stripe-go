@@ -29,22 +29,6 @@ const (
 	ReviewOpenedReasonRule   ReviewOpenedReason = "rule"
 )
 
-// The reason the review is currently open or closed. One of `rule`, `manual`, `approved`, `refunded`, `refunded_as_fraud`, `disputed`, or `redacted`.
-type ReviewReason string
-
-// Deprecated: we preserve this name for backwards-compatibility, prefer `ReviewReason`.
-type ReviewReasonType = ReviewReason
-
-// List of values that ReviewReason can take
-const (
-	ReviewReasonApproved        ReviewReason = "approved"
-	ReviewReasonDisputed        ReviewReason = "disputed"
-	ReviewReasonManual          ReviewReason = "manual"
-	ReviewReasonRefunded        ReviewReason = "refunded"
-	ReviewReasonRefundedAsFraud ReviewReason = "refunded_as_fraud"
-	ReviewReasonRule            ReviewReason = "rule"
-)
-
 // Returns a list of Review objects that have open set to true. The objects are sorted in descending order by creation date, with the most recently created object appearing first.
 type ReviewListParams struct {
 	ListParams   `form:"*"`
@@ -119,7 +103,7 @@ type Review struct {
 	// The PaymentIntent ID associated with this review, if one exists.
 	PaymentIntent *PaymentIntent `json:"payment_intent"`
 	// The reason the review is currently open or closed. One of `rule`, `manual`, `approved`, `refunded`, `refunded_as_fraud`, `disputed`, or `redacted`.
-	Reason ReviewReason `json:"reason"`
+	Reason string `json:"reason"`
 	// Information related to the browsing session of the user who initiated the payment.
 	Session *ReviewSession `json:"session"`
 }

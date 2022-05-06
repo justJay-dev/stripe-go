@@ -8,12 +8,6 @@ package stripe
 
 import "github.com/stripe/stripe-go/v72/form"
 
-// Possible values for the action parameter on usage record creation.
-const (
-	UsageRecordActionIncrement string = "increment"
-	UsageRecordActionSet       string = "set"
-)
-
 // Creates a usage record for a specified subscription item and date, and fills it with a quantity.
 //
 // Usage records provide quantity information that Stripe uses to track how much a customer is using your service. With usage information and the pricing model set up by the [metered billing](https://stripe.com/docs/billing/subscriptions/metered-billing) plan, Stripe helps you send accurate invoices to your customers.

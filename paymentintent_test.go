@@ -23,7 +23,7 @@ func TestPaymentIntentNextAction_UnmarshalJSON(t *testing.T) {
 	err = json.Unmarshal(bytes, &action)
 	assert.NoError(t, err)
 
-	assert.Equal(t, PaymentIntentNextActionTypeRedirectToURL, action.Type)
+	assert.Equal(t, "redirect_to_url", action.Type)
 	assert.Equal(t, "https://stripe.com", action.RedirectToURL.URL)
 	assert.Equal(t, "https://stripe.com/return", action.RedirectToURL.ReturnURL)
 }

@@ -1,4 +1,4 @@
-package reversal
+package transferreversal
 
 import (
 	"testing"
@@ -9,7 +9,7 @@ import (
 )
 
 func TestReversalGet(t *testing.T) {
-	reversal, err := Get("trr_123", &stripe.ReversalParams{
+	reversal, err := Get("trr_123", &stripe.TransferReversalParams{
 		Transfer: stripe.String("tr_123"),
 	})
 	assert.Nil(t, err)
@@ -17,19 +17,19 @@ func TestReversalGet(t *testing.T) {
 }
 
 func TestReversalList(t *testing.T) {
-	i := List(&stripe.ReversalListParams{
+	i := List(&stripe.TransferReversalListParams{
 		Transfer: stripe.String("tr_123"),
 	})
 
 	// Verify that we can get at least one reversal
 	assert.True(t, i.Next())
 	assert.Nil(t, i.Err())
-	assert.NotNil(t, i.Reversal())
-	assert.NotNil(t, i.ReversalList())
+	assert.NotNil(t, i.TransferReversal())
+	assert.NotNil(t, i.TransferReversalList())
 }
 
 func TestReversalNew(t *testing.T) {
-	reversal, err := New(&stripe.ReversalParams{
+	reversal, err := New(&stripe.TransferReversalParams{
 		Amount:   stripe.Int64(123),
 		Transfer: stripe.String("tr_123"),
 	})
@@ -38,7 +38,7 @@ func TestReversalNew(t *testing.T) {
 }
 
 func TestReversalUpdate(t *testing.T) {
-	reversal, err := Update("trr_123", &stripe.ReversalParams{
+	reversal, err := Update("trr_123", &stripe.TransferReversalParams{
 		Params: stripe.Params{
 			Metadata: map[string]string{
 				"foo": "bar",

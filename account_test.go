@@ -140,7 +140,7 @@ func TestAccount_Unmarshal(t *testing.T) {
 
 	assert.Equal(t, int64(1234567890), account.Requirements.CurrentDeadline)
 	assert.Equal(t, 2, len(account.Requirements.CurrentlyDue))
-	assert.Equal(t, AccountRequirementsDisabledReasonFieldsNeeded, account.Requirements.DisabledReason)
+	assert.Equal(t, "fields_needed", account.Requirements.DisabledReason)
 	assert.Equal(t, 1, len(account.Requirements.Errors))
 	assert.Equal(t, "invalid_value_other", account.Requirements.Errors[0].Code)
 	assert.Equal(t, 1, len(account.Requirements.EventuallyDue))
@@ -154,12 +154,12 @@ func TestAccount_Unmarshal(t *testing.T) {
 	assert.Equal(t, "descriptor", account.Settings.Payments.StatementDescriptor)
 	assert.Equal(t, true, account.Settings.Payouts.DebitNegativeBalances)
 	assert.Equal(t, int64(2), account.Settings.Payouts.Schedule.DelayDays)
-	assert.Equal(t, PayoutIntervalWeekly, account.Settings.Payouts.Schedule.Interval)
+	assert.Equal(t, "weekly", account.Settings.Payouts.Schedule.Interval)
 
 	assert.Equal(t, int64(1528573382), account.TOSAcceptance.Date)
 	assert.Equal(t, "127.0.0.1", account.TOSAcceptance.IP)
 	assert.Equal(t, "user agent", account.TOSAcceptance.UserAgent)
-	assert.Equal(t, AccountTOSAcceptanceServiceAgreementRecipient, account.TOSAcceptance.ServiceAgreement)
+	assert.Equal(t, "recipient", account.TOSAcceptance.ServiceAgreement)
 
 	assert.Equal(t, AccountTypeCustom, account.Type)
 }

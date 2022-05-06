@@ -91,7 +91,7 @@ func TestAccountNew(t *testing.T) {
 				DebitNegativeBalances: stripe.Bool(true),
 				Schedule: &stripe.PayoutScheduleParams{
 					DelayDaysMinimum: stripe.Bool(true),
-					Interval:         stripe.String(string(stripe.PayoutIntervalManual)),
+					Interval:         stripe.String("manual"),
 				},
 				StatementDescriptor: stripe.String("payout_descriptor"),
 			},
@@ -104,7 +104,7 @@ func TestAccountNew(t *testing.T) {
 
 func TestAccountReject(t *testing.T) {
 	account, err := Reject("acct_123", &stripe.AccountRejectParams{
-		Reason: stripe.String(string(stripe.AccountRejectReasonFraud)),
+		Reason: stripe.String("fraud"),
 	})
 	assert.Nil(t, err)
 	assert.NotNil(t, account)
@@ -113,7 +113,7 @@ func TestAccountReject(t *testing.T) {
 func TestAccountUpdate(t *testing.T) {
 	account, err := Update("acct_123", &stripe.AccountParams{
 		Company: &stripe.AccountCompanyParams{
-			Address: &stripe.AccountAddressParams{
+			Address: &stripe.AddressParams{
 				Country:    stripe.String("CA"),
 				City:       stripe.String("Montreal"),
 				PostalCode: stripe.String("H2Y 1C6"),

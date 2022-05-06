@@ -8,39 +8,6 @@ package stripe
 
 import "encoding/json"
 
-// [Learn more](https://stripe.com/docs/reports/reporting-categories) about how reporting categories can help you understand balance transactions from an accounting perspective.
-type BalanceTransactionReportingCategory string
-
-// List of values that BalanceTransactionReportingCategory can take
-const (
-	BalanceTransactionReportingCategoryAdvance                     BalanceTransactionReportingCategory = "advance"
-	BalanceTransactionReportingCategoryAdvanceFunding              BalanceTransactionReportingCategory = "advance_funding"
-	BalanceTransactionReportingCategoryCharge                      BalanceTransactionReportingCategory = "charge"
-	BalanceTransactionReportingCategoryChargeFailure               BalanceTransactionReportingCategory = "charge_failure"
-	BalanceTransactionReportingCategoryConnectCollectionTransfer   BalanceTransactionReportingCategory = "connect_collection_transfer"
-	BalanceTransactionReportingCategoryConnectReservedFunds        BalanceTransactionReportingCategory = "connect_reserved_funds"
-	BalanceTransactionReportingCategoryDispute                     BalanceTransactionReportingCategory = "dispute"
-	BalanceTransactionReportingCategoryDisputeReversal             BalanceTransactionReportingCategory = "dispute_reversal"
-	BalanceTransactionReportingCategoryFee                         BalanceTransactionReportingCategory = "fee"
-	BalanceTransactionReportingCategoryIssuingAuthorizationHold    BalanceTransactionReportingCategory = "issuing_authorization_hold"
-	BalanceTransactionReportingCategoryIssuingAuthorizationRelease BalanceTransactionReportingCategory = "issuing_authorization_release"
-	BalanceTransactionReportingCategoryIssuingTransaction          BalanceTransactionReportingCategory = "issuing_transaction"
-	BalanceTransactionReportingCategoryOtherAdjustment             BalanceTransactionReportingCategory = "other_adjustment"
-	BalanceTransactionReportingCategoryPartialCaptureReversal      BalanceTransactionReportingCategory = "partial_capture_reversal"
-	BalanceTransactionReportingCategoryPayout                      BalanceTransactionReportingCategory = "payout"
-	BalanceTransactionReportingCategoryPayoutReversal              BalanceTransactionReportingCategory = "payout_reversal"
-	BalanceTransactionReportingCategoryPlatformEarning             BalanceTransactionReportingCategory = "platform_earning"
-	BalanceTransactionReportingCategoryPlatformEarningRefund       BalanceTransactionReportingCategory = "platform_earning_refund"
-	BalanceTransactionReportingCategoryRefund                      BalanceTransactionReportingCategory = "refund"
-	BalanceTransactionReportingCategoryRefundFailure               BalanceTransactionReportingCategory = "refund_failure"
-	BalanceTransactionReportingCategoryRiskReservedFunds           BalanceTransactionReportingCategory = "risk_reserved_funds"
-	BalanceTransactionReportingCategoryTax                         BalanceTransactionReportingCategory = "tax"
-	BalanceTransactionReportingCategoryTopup                       BalanceTransactionReportingCategory = "topup"
-	BalanceTransactionReportingCategoryTopupReversal               BalanceTransactionReportingCategory = "topup_reversal"
-	BalanceTransactionReportingCategoryTransfer                    BalanceTransactionReportingCategory = "transfer"
-	BalanceTransactionReportingCategoryTransferReversal            BalanceTransactionReportingCategory = "transfer_reversal"
-)
-
 type BalanceTransactionSourceType string
 
 // List of values that BalanceTransactionSourceType can take
@@ -55,9 +22,9 @@ const (
 	BalanceTransactionSourceTypeIssuingTransaction        BalanceTransactionSourceType = "issuing.transaction"
 	BalanceTransactionSourceTypePayout                    BalanceTransactionSourceType = "payout"
 	BalanceTransactionSourceTypeRefund                    BalanceTransactionSourceType = "refund"
-	BalanceTransactionSourceTypeReversal                  BalanceTransactionSourceType = "reversal"
 	BalanceTransactionSourceTypeTopup                     BalanceTransactionSourceType = "topup"
 	BalanceTransactionSourceTypeTransfer                  BalanceTransactionSourceType = "transfer"
+	BalanceTransactionSourceTypeTransferReversal          BalanceTransactionSourceType = "transfer_reversal"
 )
 
 // List of values that BalanceTransactionStatus can take
@@ -176,11 +143,11 @@ type BalanceTransaction struct {
 	// String representing the object's type. Objects of the same type share the same value.
 	Object string `json:"object"`
 	// [Learn more](https://stripe.com/docs/reports/reporting-categories) about how reporting categories can help you understand balance transactions from an accounting perspective.
-	ReportingCategory BalanceTransactionReportingCategory `json:"reporting_category"`
+	ReportingCategory string `json:"reporting_category"`
 	// The Stripe object to which this transaction is related.
 	Source *BalanceTransactionSource `json:"source"`
 	// If the transaction's net funds are available in the Stripe balance yet. Either `available` or `pending`.
-	Status BalanceTransactionStatus `json:"status"`
+	Status string `json:"status"`
 	// Transaction type: `adjustment`, `advance`, `advance_funding`, `anticipation_repayment`, `application_fee`, `application_fee_refund`, `charge`, `connect_collection_transfer`, `contribution`, `issuing_authorization_hold`, `issuing_authorization_release`, `issuing_dispute`, `issuing_transaction`, `payment`, `payment_failure_refund`, `payment_refund`, `payout`, `payout_cancel`, `payout_failure`, `refund`, `refund_failure`, `reserve_transaction`, `reserved_funds`, `stripe_fee`, `stripe_fx_fee`, `tax_fee`, `topup`, `topup_reversal`, `transfer`, `transfer_cancel`, `transfer_failure`, or `transfer_refund`. [Learn more](https://stripe.com/docs/reports/balance-transaction-types) about balance transaction types and what they represent. If you are looking to classify transactions for accounting purposes, you might want to consider `reporting_category` instead.
 	Type BalanceTransactionType `json:"type"`
 }
@@ -195,10 +162,10 @@ type BalanceTransactionSource struct {
 	FeeRefund                 *FeeRefund                 `json:"-"`
 	IssuingAuthorization      *IssuingAuthorization      `json:"-"`
 	IssuingDispute            *IssuingDispute            `json:"-"`
-	IssuingTransaction        *IssuingAuthorization      `json:"-"`
+	IssuingTransaction        *IssuingTransaction        `json:"-"`
 	Payout                    *Payout                    `json:"-"`
 	Refund                    *Refund                    `json:"-"`
-	Reversal                  *Reversal                  `json:"-"`
+	TransferReversal          *TransferReversal          `json:"-"`
 	Topup                     *Topup                     `json:"-"`
 	Transfer                  *Transfer                  `json:"-"`
 }
@@ -268,12 +235,12 @@ func (b *BalanceTransactionSource) UnmarshalJSON(data []byte) error {
 		err = json.Unmarshal(data, &b.Payout)
 	case BalanceTransactionSourceTypeRefund:
 		err = json.Unmarshal(data, &b.Refund)
-	case BalanceTransactionSourceTypeReversal:
-		err = json.Unmarshal(data, &b.Reversal)
 	case BalanceTransactionSourceTypeTopup:
 		err = json.Unmarshal(data, &b.Topup)
 	case BalanceTransactionSourceTypeTransfer:
 		err = json.Unmarshal(data, &b.Transfer)
+	case BalanceTransactionSourceTypeTransferReversal:
+		err = json.Unmarshal(data, &b.TransferReversal)
 	}
 	return err
 }

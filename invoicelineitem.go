@@ -79,8 +79,7 @@ type InvoiceLine struct {
 	// The tax rates which apply to the line item.
 	TaxRates []*TaxRate `json:"tax_rates"`
 	// A string identifying the type of the source of this line item, either an `invoiceitem` or a `subscription`.
-	Type             InvoiceLineType `json:"type"`
-	UnifiedProration bool            `json:"unified_proration"`
+	Type InvoiceLineType `json:"type"`
 }
 
 // Period is a structure representing a start and end dates.

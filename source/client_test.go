@@ -19,7 +19,7 @@ func TestSourceNew(t *testing.T) {
 		Type:     stripe.String("ach_credit_transfer"),
 		Amount:   stripe.Int64(1000),
 		Currency: stripe.String(string(stripe.CurrencyUSD)),
-		Flow:     stripe.String(string(stripe.SourceFlowReceiver)),
+		Flow:     stripe.String("receiver"),
 		Mandate: &stripe.SourceMandateParams{
 			Amount: stripe.Int64(1000),
 			Acceptance: &stripe.SourceMandateAcceptanceParams{
@@ -31,17 +31,17 @@ func TestSourceNew(t *testing.T) {
 					UserAgent: stripe.String("User-Agent"),
 				},
 				UserAgent: stripe.String("User-Agent"),
-				Status:    stripe.String(string(stripe.SourceMandateAcceptanceStatusAccepted)),
+				Status:    stripe.String("accepted"),
 			},
 			Currency:           stripe.String(string(stripe.CurrencyUSD)),
 			Interval:           stripe.String("one_time"),
-			NotificationMethod: stripe.String(string(stripe.SourceMandateNotificationMethodNone)),
+			NotificationMethod: stripe.String("none"),
 		},
 		Owner: &stripe.SourceOwnerParams{
 			Email: stripe.String("jenny.rosen@example.com"),
 		},
 		Receiver: &stripe.SourceReceiverParams{
-			RefundAttributesMethod: stripe.String(string(stripe.SourceRefundAttributesMethodManual)),
+			RefundAttributesMethod: stripe.String("manual"),
 		},
 	})
 	assert.Nil(t, err)
@@ -71,7 +71,7 @@ func TestSourceSharing(t *testing.T) {
 		Type:           stripe.String("card"),
 		Customer:       stripe.String("cus_123"),
 		OriginalSource: stripe.String("src_123"),
-		Usage:          stripe.String(string(stripe.SourceUsageReusable)),
+		Usage:          stripe.String("reusable"),
 	}
 	params.SetStripeAccount("acct_123")
 	source, err := New(params)

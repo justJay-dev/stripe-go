@@ -8,27 +8,6 @@ package stripe
 
 import "encoding/json"
 
-// OrderStatus represents the statuses of an order object.
-type OrderStatus string
-
-// List of values that OrderStatus can take.
-const (
-	OrderStatusCanceled  OrderStatus = "canceled"
-	OrderStatusCreated   OrderStatus = "created"
-	OrderStatusFulfilled OrderStatus = "fulfilled"
-	OrderStatusPaid      OrderStatus = "paid"
-	OrderStatusReturned  OrderStatus = "returned"
-)
-
-// The type of estimate. Must be either `"range"` or `"exact"`.
-type OrderDeliveryEstimateType string
-
-// List of values that OrderDeliveryEstimateType can take
-const (
-	OrderDeliveryEstimateTypeExact OrderDeliveryEstimateType = "exact"
-	OrderDeliveryEstimateTypeRange OrderDeliveryEstimateType = "range"
-)
-
 // List of items constituting the order. An order can have up to 25 items.
 type OrderItemParams struct {
 	Amount      *int64  `form:"amount"`
@@ -123,16 +102,9 @@ type OrderPayParams struct {
 	// The ID of an existing customer that will be charged for this order. If no customer was attached to the order at creation, either `source` or `customer` is required. Otherwise, the specified customer will be charged instead of the one attached to the order.
 	Customer *string `form:"customer"`
 	// The email address of the customer placing the order. Required if not previously specified for the order.
-	Email  *string       `form:"email"`
-	Source *SourceParams `form:"*"` // SourceParams has custom encoding so brought to top level with "*"
-}
-
-// SetSource adds valid sources to a OrderPayParams object,
-// returning an error for unsupported sources.
-func (p *OrderPayParams) SetSource(sp interface{}) error {
-	source, err := SourceParamsFor(sp)
-	p.Source = source
-	return err
+	Email *string `form:"email"`
+	// A [Token](https://stripe.com/docs/api#tokens)'s or a [Source](https://stripe.com/docs/api#sources)'s ID, as returned by [Elements](https://stripe.com/docs/elements). If no customer was attached to the order at creation, either `source` or `customer` is required. Otherwise, the specified source will be charged intead of the customer attached to the order.
+	Source *string `form:"source"`
 }
 
 // The estimated delivery date for the given shipping method. Can be either a specific date or a range.
@@ -146,7 +118,7 @@ type DeliveryEstimate struct {
 	// If `type` is `"range"`, `latest` will be the latest delivery date in the format YYYY-MM-DD.
 	Latest string `json:"latest"`
 	// The type of estimate. Must be either `"range"` or `"exact"`.
-	Type OrderDeliveryEstimateType `json:"type"`
+	Type string `json:"type"`
 }
 
 // A list of supported shipping methods for this order. The desired shipping method can be specified either by updating the order, or when paying it.
@@ -175,31 +147,6 @@ type StatusTransitions struct {
 	Returned int64 `json:"returned"`
 }
 
-// OrderUpdateParams is the set of parameters that can be used when updating an order.
-type OrderUpdateParams struct {
-	Params                 `form:"*"`
-	Coupon                 *string                    `form:"coupon"`
-	SelectedShippingMethod *string                    `form:"selected_shipping_method"`
-	Shipping               *OrderUpdateShippingParams `form:"shipping"`
-	Status                 *string                    `form:"status"`
-}
-
-// OrderUpdateShippingParams is the set of parameters that can be used for the shipping
-// hash on order update.
-type OrderUpdateShippingParams struct {
-	Carrier        *string `form:"carrier"`
-	TrackingNumber *string `form:"tracking_number"`
-}
-
-// Shipping describes the shipping hash on an order.
-type Shipping struct {
-	Address        *Address `json:"address"`
-	Carrier        string   `json:"carrier"`
-	Name           string   `json:"name"`
-	Phone          string   `json:"phone"`
-	TrackingNumber string   `json:"tracking_number"`
-}
-
 // Order objects are created to handle end customers' purchases of previously
 // defined [products](https://stripe.com/docs/api#products). You can create, retrieve, and pay individual orders, as well
 // as list all orders. Orders are identified by a unique, random ID.
@@ -222,7 +169,7 @@ type Order struct {
 	// Three-letter [ISO currency code](https://www.iso.org/iso-4217-currency-codes.html), in lowercase. Must be a [supported currency](https://stripe.com/docs/currencies).
 	Currency Currency `json:"currency"`
 	// The customer used for the order.
-	Customer Customer `json:"customer"`
+	Customer *Customer `json:"customer"`
 	// The email address of the customer placing the order.
 	Email string `json:"email"`
 	// External coupon code to load for this order.
@@ -242,13 +189,13 @@ type Order struct {
 	// The shipping method that is currently selected for this order, if any. If present, it is equal to one of the `id`s of shipping methods in the `shipping_methods` array. At order creation time, if there are multiple shipping methods, Stripe will automatically selected the first method.
 	SelectedShippingMethod *string `json:"selected_shipping_method"`
 	// The shipping address for the order. Present if the order is for goods to be shipped.
-	Shipping *Shipping `json:"shipping"`
+	Shipping *ShippingDetails `json:"shipping"`
 	// A list of supported shipping methods for this order. The desired shipping method can be specified either by updating the order, or when paying it.
 	ShippingMethods []*ShippingMethod `json:"shipping_methods"`
 	// Current order status. One of `created`, `paid`, `canceled`, `fulfilled`, or `returned`. More details in the [Orders Guide](https://stripe.com/docs/orders/guide#understanding-order-statuses).
 	Status string `json:"status"`
 	// The timestamps at which the order status was updated.
-	StatusTransitions StatusTransitions `json:"status_transitions"`
+	StatusTransitions *StatusTransitions `json:"status_transitions"`
 	// Time at which the object was last updated. Measured in seconds since the Unix epoch.
 	Updated int64 `json:"updated"`
 	// The user's order ID if it is different from the Stripe order ID.

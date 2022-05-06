@@ -8,27 +8,6 @@ package stripe
 
 import "encoding/json"
 
-// The type of fuel that was purchased. One of `diesel`, `unleaded_plus`, `unleaded_regular`, `unleaded_super`, or `other`.
-type IssuingTransactionPurchaseDetailsFuelType string
-
-// List of values that IssuingTransactionPurchaseDetailsFuelType can take
-const (
-	IssuingTransactionPurchaseDetailsFuelTypeDiesel          IssuingTransactionPurchaseDetailsFuelType = "diesel"
-	IssuingTransactionPurchaseDetailsFuelTypeOther           IssuingTransactionPurchaseDetailsFuelType = "other"
-	IssuingTransactionPurchaseDetailsFuelTypeUnleadedPlus    IssuingTransactionPurchaseDetailsFuelType = "unleaded_plus"
-	IssuingTransactionPurchaseDetailsFuelTypeUnleadedRegular IssuingTransactionPurchaseDetailsFuelType = "unleaded_regular"
-	IssuingTransactionPurchaseDetailsFuelTypeUnleadedSuper   IssuingTransactionPurchaseDetailsFuelType = "unleaded_super"
-)
-
-// The units for `volume_decimal`. One of `us_gallon` or `liter`.
-type IssuingTransactionPurchaseDetailsFuelUnit string
-
-// List of values that IssuingTransactionPurchaseDetailsFuelUnit can take
-const (
-	IssuingTransactionPurchaseDetailsFuelUnitLiter    IssuingTransactionPurchaseDetailsFuelUnit = "liter"
-	IssuingTransactionPurchaseDetailsFuelUnitUSGallon IssuingTransactionPurchaseDetailsFuelUnit = "us_gallon"
-)
-
 // The nature of the transaction.
 type IssuingTransactionType string
 
@@ -107,9 +86,9 @@ type IssuingTransactionPurchaseDetailsFlight struct {
 // Information about fuel that was purchased with this transaction.
 type IssuingTransactionPurchaseDetailsFuel struct {
 	// The type of fuel that was purchased. One of `diesel`, `unleaded_plus`, `unleaded_regular`, `unleaded_super`, or `other`.
-	Type IssuingTransactionPurchaseDetailsFuelType `json:"type"`
+	Type string `json:"type"`
 	// The units for `volume_decimal`. One of `us_gallon` or `liter`.
-	Unit IssuingTransactionPurchaseDetailsFuelUnit `json:"unit"`
+	Unit string `json:"unit"`
 	// The cost in cents per each unit of fuel, represented as a decimal string with at most 12 decimal places.
 	UnitCostDecimal float64 `json:"unit_cost_decimal,string"`
 	// The volume of the fuel that was pumped, represented as a decimal string with at most 12 decimal places.

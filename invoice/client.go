@@ -219,6 +219,28 @@ func (c Client) ListLines(listParams *stripe.InvoiceLineListParams) *LineIter {
 	}
 }
 
+// UpcomingLines is the method for the `GET /v1/invoices/upcoming/lines` API.
+func UpcomingLines(params *stripe.InvoiceUpcomingLinesParams) *LineIter {
+	return getC().UpcomingLines(params)
+}
+
+// UpcomingLines is the method for the `GET /v1/invoices/upcoming/lines` API.
+func (c Client) UpcomingLines(listParams *stripe.InvoiceUpcomingLinesParams) *LineIter {
+	return &LineIter{
+		Iter: stripe.GetIter(listParams, func(p *stripe.Params, b *form.Values) ([]interface{}, stripe.ListContainer, error) {
+			list := &stripe.InvoiceLineList{}
+			err := c.B.CallRaw(http.MethodGet, "/v1/invoices/upcoming/lines", c.Key, b, p, list)
+
+			ret := make([]interface{}, len(list.Data))
+			for i, v := range list.Data {
+				ret[i] = v
+			}
+
+			return ret, list, err
+		}),
+	}
+}
+
 // LineIter is an iterator for invoice line items.
 type LineIter struct {
 	*stripe.Iter

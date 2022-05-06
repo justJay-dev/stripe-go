@@ -6,8 +6,6 @@
 
 package stripe
 
-import "encoding/json"
-
 // Returns a list of your order returns. The returns are returned sorted by creation date, with the most recently created return appearing first.
 type OrderReturnListParams struct {
 	ListParams `form:"*"`
@@ -57,23 +55,4 @@ type OrderReturnList struct {
 	APIResource
 	ListMeta
 	Data []*OrderReturn `json:"data"`
-}
-
-// UnmarshalJSON handles deserialization of an OrderReturn.
-// This custom unmarshaling is needed because the resulting
-// property may be an id or the full struct if it was expanded.
-func (o *OrderReturn) UnmarshalJSON(data []byte) error {
-	if id, ok := ParseID(data); ok {
-		o.ID = id
-		return nil
-	}
-
-	type orderReturn OrderReturn
-	var v orderReturn
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
-	}
-
-	*o = OrderReturn(v)
-	return nil
 }

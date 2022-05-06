@@ -15,17 +15,7 @@ type SetupIntentCancellationReason string
 const (
 	SetupIntentCancellationReasonAbandoned           SetupIntentCancellationReason = "abandoned"
 	SetupIntentCancellationReasonDuplicate           SetupIntentCancellationReason = "duplicate"
-	SetupIntentCancellationReasonFailedInvoice       SetupIntentCancellationReason = "failed_invoice"
-	SetupIntentCancellationReasonFraudulent          SetupIntentCancellationReason = "fraudulent"
 	SetupIntentCancellationReasonRequestedByCustomer SetupIntentCancellationReason = "requested_by_customer"
-)
-
-// Type of the next action to perform, one of `redirect_to_url`, `use_stripe_sdk`, `alipay_handle_redirect`, `oxxo_display_details`, or `verify_with_microdeposits`.
-type SetupIntentNextActionType string
-
-// List of values that SetupIntentNextActionType can take
-const (
-	SetupIntentNextActionTypeRedirectToURL SetupIntentNextActionType = "redirect_to_url"
 )
 
 // The type of the microdeposit sent to the customer. Used to distinguish between different verification methods.
@@ -35,6 +25,14 @@ type SetupIntentNextActionVerifyWithMicrodepositsMicrodepositType string
 const (
 	SetupIntentNextActionVerifyWithMicrodepositsMicrodepositTypeAmounts        SetupIntentNextActionVerifyWithMicrodepositsMicrodepositType = "amounts"
 	SetupIntentNextActionVerifyWithMicrodepositsMicrodepositTypeDescriptorCode SetupIntentNextActionVerifyWithMicrodepositsMicrodepositType = "descriptor_code"
+)
+
+// Type of the next action to perform, one of `redirect_to_url`, `use_stripe_sdk`, `alipay_handle_redirect`, `oxxo_display_details`, or `verify_with_microdeposits`.
+type SetupIntentNextActionType string
+
+// List of values that SetupIntentNextActionType can take
+const (
+	SetupIntentNextActionTypeRedirectToURL SetupIntentNextActionType = "redirect_to_url"
 )
 
 // Currency supported by the bank account
@@ -157,17 +155,6 @@ const (
 	SetupIntentStatusSucceeded             SetupIntentStatus = "succeeded"
 )
 
-// Indicates how the payment method is intended to be used in the future.
-//
-// Use `on_session` if you intend to only reuse the payment method when the customer is in your checkout flow. Use `off_session` if your customer may or may not be in your checkout flow. If not provided, this value defaults to `off_session`.
-type SetupIntentUsage string
-
-// List of values that SetupIntentUsage can take
-const (
-	SetupIntentUsageOffSession SetupIntentUsage = "off_session"
-	SetupIntentUsageOnSession  SetupIntentUsage = "on_session"
-)
-
 // If this is a Mandate accepted offline, this hash contains details about the offline acceptance.
 type SetupIntentMandateDataCustomerAcceptanceOfflineParams struct{}
 
@@ -182,7 +169,7 @@ type SetupIntentMandateDataCustomerAcceptanceOnlineParams struct {
 // This hash contains details about the customer acceptance of the Mandate.
 type SetupIntentMandateDataCustomerAcceptanceParams struct {
 	// The time at which the customer accepted the Mandate.
-	AcceptedAt int64 `form:"accepted_at"`
+	AcceptedAt *int64 `form:"accepted_at"`
 	// If this is a Mandate accepted offline, this hash contains details about the offline acceptance.
 	Offline *SetupIntentMandateDataCustomerAcceptanceOfflineParams `form:"offline"`
 	// If this is a Mandate accepted online, this hash contains details about the online acceptance.
@@ -462,12 +449,12 @@ type SetupIntentPaymentMethodOptionsCardParams struct {
 }
 
 // Additional fields for Mandate creation
-type SetupIntentPaymentMethodOptionsSepaDebitMandateOptionsParams struct{}
+type SetupIntentPaymentMethodOptionsSEPADebitMandateOptionsParams struct{}
 
 // If this is a `sepa_debit` SetupIntent, this sub-hash contains details about the SEPA Debit payment method options.
-type SetupIntentPaymentMethodOptionsSepaDebitParams struct {
+type SetupIntentPaymentMethodOptionsSEPADebitParams struct {
 	// Additional fields for Mandate creation
-	MandateOptions *SetupIntentPaymentMethodOptionsSepaDebitMandateOptionsParams `form:"mandate_options"`
+	MandateOptions *SetupIntentPaymentMethodOptionsSEPADebitMandateOptionsParams `form:"mandate_options"`
 }
 
 // Additional fields for Financial Connections Session creation
@@ -493,7 +480,7 @@ type SetupIntentPaymentMethodOptionsParams struct {
 	// Configuration for any card setup attempted on this SetupIntent.
 	Card *SetupIntentPaymentMethodOptionsCardParams `form:"card"`
 	// If this is a `sepa_debit` SetupIntent, this sub-hash contains details about the SEPA Debit payment method options.
-	SepaDebit *SetupIntentPaymentMethodOptionsSepaDebitParams `form:"sepa_debit"`
+	SEPADebit *SetupIntentPaymentMethodOptionsSEPADebitParams `form:"sepa_debit"`
 	// If this is a `us_bank_account` SetupIntent, this sub-hash contains details about the US bank account payment method options.
 	USBankAccount *SetupIntentPaymentMethodOptionsUSBankAccountParams `form:"us_bank_account"`
 }
@@ -827,7 +814,7 @@ type SetupIntentNextActionVerifyWithMicrodeposits struct {
 type SetupIntentNextAction struct {
 	RedirectToURL *SetupIntentNextActionRedirectToURL `json:"redirect_to_url"`
 	// Type of the next action to perform, one of `redirect_to_url`, `use_stripe_sdk`, `alipay_handle_redirect`, `oxxo_display_details`, or `verify_with_microdeposits`.
-	Type SetupIntentNextActionType `json:"type"`
+	Type string `json:"type"`
 	// When confirming a SetupIntent with Stripe.js, Stripe.js depends on the contents of this dictionary to invoke authentication flows. The shape of the contents is subject to change and is only intended to be used by Stripe.js.
 	UseStripeSDK            *SetupIntentNextActionUseStripeSDK            `json:"use_stripe_sdk"`
 	VerifyWithMicrodeposits *SetupIntentNextActionVerifyWithMicrodeposits `json:"verify_with_microdeposits"`
@@ -845,8 +832,8 @@ type SetupIntentPaymentMethodOptionsACSSDebitMandateOptions struct {
 	TransactionType SetupIntentPaymentMethodOptionsACSSDebitMandateOptionsTransactionType `json:"transaction_type"`
 }
 type SetupIntentPaymentMethodOptionsACSSDebit struct {
-	// See SetupIntentPaymentMethodOptionsACSSDebitCurrency for allowed values
-	Currency       string                                                  `json:"currency"`
+	// Currency supported by the bank account
+	Currency       SetupIntentPaymentMethodOptionsACSSDebitCurrency        `json:"currency"`
 	MandateOptions *SetupIntentPaymentMethodOptionsACSSDebitMandateOptions `json:"mandate_options"`
 	// Bank account verification method.
 	VerificationMethod SetupIntentPaymentMethodOptionsACSSDebitVerificationMethod `json:"verification_method"`
@@ -881,9 +868,9 @@ type SetupIntentPaymentMethodOptionsCard struct {
 	// We strongly recommend that you rely on our SCA Engine to automatically prompt your customers for authentication based on risk level and [other requirements](https://stripe.com/docs/strong-customer-authentication). However, if you wish to request 3D Secure based on logic from your own fraud engine, provide this option. Permitted values include: `automatic` or `any`. If not provided, defaults to `automatic`. Read our guide on [manually requesting 3D Secure](https://stripe.com/docs/payments/3d-secure#manual-three-ds) for more information on how this configuration interacts with Radar and our SCA Engine.
 	RequestThreeDSecure SetupIntentPaymentMethodOptionsCardRequestThreeDSecure `json:"request_three_d_secure"`
 }
-type SetupIntentPaymentMethodOptionsSepaDebitMandateOptions struct{}
-type SetupIntentPaymentMethodOptionsSepaDebit struct {
-	MandateOptions *SetupIntentPaymentMethodOptionsSepaDebitMandateOptions `json:"mandate_options"`
+type SetupIntentPaymentMethodOptionsSEPADebitMandateOptions struct{}
+type SetupIntentPaymentMethodOptionsSEPADebit struct {
+	MandateOptions *SetupIntentPaymentMethodOptionsSEPADebitMandateOptions `json:"mandate_options"`
 }
 type SetupIntentPaymentMethodOptionsUSBankAccountFinancialConnections struct {
 	// The list of permissions to request. The `payment_method` permission must be included.
@@ -901,7 +888,7 @@ type SetupIntentPaymentMethodOptionsUSBankAccount struct {
 type SetupIntentPaymentMethodOptions struct {
 	ACSSDebit     *SetupIntentPaymentMethodOptionsACSSDebit     `json:"acss_debit"`
 	Card          *SetupIntentPaymentMethodOptionsCard          `json:"card"`
-	SepaDebit     *SetupIntentPaymentMethodOptionsSepaDebit     `json:"sepa_debit"`
+	SEPADebit     *SetupIntentPaymentMethodOptionsSEPADebit     `json:"sepa_debit"`
 	USBankAccount *SetupIntentPaymentMethodOptionsUSBankAccount `json:"us_bank_account"`
 }
 
@@ -976,7 +963,7 @@ type SetupIntent struct {
 	// Indicates how the payment method is intended to be used in the future.
 	//
 	// Use `on_session` if you intend to only reuse the payment method when the customer is in your checkout flow. Use `off_session` if your customer may or may not be in your checkout flow. If not provided, this value defaults to `off_session`.
-	Usage SetupIntentUsage `json:"usage"`
+	Usage string `json:"usage"`
 }
 
 // SetupIntentList is a list of SetupIntents as retrieved from a list endpoint.

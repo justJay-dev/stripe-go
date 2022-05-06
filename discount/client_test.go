@@ -14,7 +14,7 @@ func TestDiscountDel(t *testing.T) {
 }
 
 func TestDiscountDelSub(t *testing.T) {
-	discount, err := DelSubscription("sub_123", nil)
+	discount, err := DelSub("sub_123", nil)
 	assert.Nil(t, err)
 	assert.NotNil(t, discount)
 }

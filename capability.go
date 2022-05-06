@@ -6,27 +6,6 @@
 
 package stripe
 
-import "encoding/json"
-
-// If the capability is disabled, this string describes why. Can be `requirements.past_due`, `requirements.pending_verification`, `listed`, `platform_paused`, `rejected.fraud`, `rejected.listed`, `rejected.terms_of_service`, `rejected.other`, `under_review`, or `other`.
-//
-// `rejected.unsupported_business` means that the account's business is not supported by the capability. For example, payment methods may restrict the businesses they support in their terms of service:
-//
-// - [Afterpay Clearpay's terms of service](https://stripe.com/afterpay-clearpay/legal#restricted-businesses)
-//
-// If you believe that the rejection is in error, please contact support at https://support.stripe.com/contact/ for assistance.
-type CapabilityDisabledReason string
-
-// List of values that CapabilityDisabledReason can take
-const (
-	CapabilityDisabledReasonPendingOnboarding        CapabilityDisabledReason = "pending.onboarding"
-	CapabilityDisabledReasonPendingReview            CapabilityDisabledReason = "pending.review"
-	CapabilityDisabledReasonRejectedFraud            CapabilityDisabledReason = "rejected_fraud"
-	CapabilityDisabledReasonRejectedListed           CapabilityDisabledReason = "rejected.listed"
-	CapabilityDisabledReasonRejectedOther            CapabilityDisabledReason = "rejected.other"
-	CapabilityDisabledReasonRequirementsFieldsNeeded CapabilityDisabledReason = "requirement.fields_needed"
-)
-
 // The status of the capability. Can be `active`, `inactive`, `pending`, or `unrequested`.
 type CapabilityStatus string
 
@@ -110,7 +89,7 @@ type CapabilityRequirements struct {
 	// - [Afterpay Clearpay's terms of service](https://stripe.com/afterpay-clearpay/legal#restricted-businesses)
 	//
 	// If you believe that the rejection is in error, please contact support at https://support.stripe.com/contact/ for assistance.
-	DisabledReason CapabilityDisabledReason `json:"disabled_reason"`
+	DisabledReason string `json:"disabled_reason"`
 	// Fields that are `currently_due` and need to be collected again because validation or verification failed.
 	Errors []*AccountRequirementsError `json:"errors"`
 	// Fields that need to be collected assuming all volume thresholds are reached. As they become required, they appear in `currently_due` as well, and `current_deadline` becomes set.
@@ -147,23 +126,4 @@ type CapabilityList struct {
 	APIResource
 	ListMeta
 	Data []*Capability `json:"data"`
-}
-
-// UnmarshalJSON handles deserialization of a Capability.
-// This custom unmarshaling is needed because the resulting
-// property may be an id or the full struct if it was expanded.
-func (c *Capability) UnmarshalJSON(data []byte) error {
-	if id, ok := ParseID(data); ok {
-		c.ID = id
-		return nil
-	}
-
-	type capability Capability
-	var v capability
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
-	}
-
-	*c = Capability(v)
-	return nil
 }

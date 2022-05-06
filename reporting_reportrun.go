@@ -6,18 +6,6 @@
 
 package stripe
 
-// Status of this report run. This will be `pending` when the run is initially created.
-//  When the run finishes, this will be set to `succeeded` and the `result` field will be populated.
-//  Rarely, we may encounter an error, at which point this will be set to `failed` and the `error` field will be populated.
-type ReportRunStatus string
-
-// List of values that ReportRunStatus can take
-const (
-	ReportRunStatusFailed    ReportRunStatus = "failed"
-	ReportRunStatusPending   ReportRunStatus = "pending"
-	ReportRunStatusSucceeded ReportRunStatus = "succeeded"
-)
-
 // Retrieves the details of an existing Report Run.
 type ReportRunParams struct {
 	Params `form:"*"`
@@ -102,7 +90,7 @@ type ReportRun struct {
 	// Status of this report run. This will be `pending` when the run is initially created.
 	//  When the run finishes, this will be set to `succeeded` and the `result` field will be populated.
 	//  Rarely, we may encounter an error, at which point this will be set to `failed` and the `error` field will be populated.
-	Status ReportRunStatus `json:"status"`
+	Status string `json:"status"`
 	// Timestamp at which this run successfully finished (populated when
 	//  `status=succeeded`). Measured in seconds since the Unix epoch.
 	SucceededAt int64 `json:"succeeded_at"`

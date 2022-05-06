@@ -21,14 +21,14 @@ type DiscountParams struct {
 type Discount struct {
 	APIResource
 	// The Checkout session that this coupon is applied to, if it is applied to a particular session in payment mode. Will not be present for subscription mode.
-	CheckoutSession *CheckoutSession `json:"checkout_session"`
+	CheckoutSession string `json:"checkout_session"`
 	// A coupon contains information about a percent-off or amount-off discount you
 	// might want to apply to a customer. Coupons may be applied to [invoices](https://stripe.com/docs/api#invoices) or
 	// [orders](https://stripe.com/docs/api#create_order_legacy-coupon). Coupons do not work with conventional one-off [charges](https://stripe.com/docs/api#create_charge).
 	Coupon *Coupon `json:"coupon"`
 	// The ID of the customer associated with this discount.
-	Customer string `json:"customer"`
-	Deleted  bool   `json:"deleted"`
+	Customer *Customer `json:"customer"`
+	Deleted  bool      `json:"deleted"`
 	// If the coupon has a duration of `repeating`, the date that this discount will end. If the coupon has a duration of `once` or `forever`, this attribute will be null.
 	End int64 `json:"end"`
 	// The ID of the discount object. Discounts cannot be fetched by ID. Use `expand[]=discounts` in API calls to expand discount IDs in an array.

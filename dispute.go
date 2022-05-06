@@ -8,27 +8,6 @@ package stripe
 
 import "encoding/json"
 
-// Reason given by cardholder for dispute. Possible values are `bank_cannot_process`, `check_returned`, `credit_not_processed`, `customer_initiated`, `debit_not_authorized`, `duplicate`, `fraudulent`, `general`, `incorrect_account_details`, `insufficient_funds`, `product_not_received`, `product_unacceptable`, `subscription_canceled`, or `unrecognized`. Read more about [dispute reasons](https://stripe.com/docs/disputes/categories).
-type DisputeReason string
-
-// List of values that DisputeReason can take
-const (
-	DisputeReasonBankCannotProcess       DisputeReason = "bank_cannot_process"
-	DisputeReasonCheckReturned           DisputeReason = "check_returned"
-	DisputeReasonCreditNotProcessed      DisputeReason = "credit_not_processed"
-	DisputeReasonCustomerInitiated       DisputeReason = "customer_initiated"
-	DisputeReasonDebitNotAuthorized      DisputeReason = "debit_not_authorized"
-	DisputeReasonDuplicate               DisputeReason = "duplicate"
-	DisputeReasonFraudulent              DisputeReason = "fraudulent"
-	DisputeReasonGeneral                 DisputeReason = "general"
-	DisputeReasonIncorrectAccountDetails DisputeReason = "incorrect_account_details"
-	DisputeReasonInsufficientFunds       DisputeReason = "insufficient_funds"
-	DisputeReasonProductNotReceived      DisputeReason = "product_not_received"
-	DisputeReasonProductUnacceptable     DisputeReason = "product_unacceptable"
-	DisputeReasonSubscriptionCanceled    DisputeReason = "subscription_canceled"
-	DisputeReasonUnrecognized            DisputeReason = "unrecognized"
-)
-
 // Current status of dispute. Possible values are `warning_needs_response`, `warning_under_review`, `warning_closed`, `needs_response`, `under_review`, `charge_refunded`, `won`, or `lost`.
 type DisputeStatus string
 
@@ -224,7 +203,7 @@ type Dispute struct {
 	// ID of the PaymentIntent that was disputed.
 	PaymentIntent *PaymentIntent `json:"payment_intent"`
 	// Reason given by cardholder for dispute. Possible values are `bank_cannot_process`, `check_returned`, `credit_not_processed`, `customer_initiated`, `debit_not_authorized`, `duplicate`, `fraudulent`, `general`, `incorrect_account_details`, `insufficient_funds`, `product_not_received`, `product_unacceptable`, `subscription_canceled`, or `unrecognized`. Read more about [dispute reasons](https://stripe.com/docs/disputes/categories).
-	Reason DisputeReason `json:"reason"`
+	Reason string `json:"reason"`
 	// Current status of dispute. Possible values are `warning_needs_response`, `warning_under_review`, `warning_closed`, `needs_response`, `under_review`, `charge_refunded`, `won`, or `lost`.
 	Status DisputeStatus `json:"status"`
 }

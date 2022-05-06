@@ -12,15 +12,6 @@ import (
 	"strconv"
 )
 
-// The type of entity that holds the account. This can be either `individual` or `company`.
-type BankAccountAccountHolderType string
-
-// List of values that BankAccountAccountHolderType can take
-const (
-	BankAccountAccountHolderTypeCompany    BankAccountAccountHolderType = "company"
-	BankAccountAccountHolderTypeIndividual BankAccountAccountHolderType = "individual"
-)
-
 // A set of available payout methods for this bank account. Only values from this set should be passed as the `method` when creating a payout.
 type BankAccountAvailablePayoutMethod string
 
@@ -28,20 +19,6 @@ type BankAccountAvailablePayoutMethod string
 const (
 	BankAccountAvailablePayoutMethodInstant  BankAccountAvailablePayoutMethod = "instant"
 	BankAccountAvailablePayoutMethodStandard BankAccountAvailablePayoutMethod = "standard"
-)
-
-// For bank accounts, possible values are `new`, `validated`, `verified`, `verification_failed`, or `errored`. A bank account that hasn't had any activity or validation performed is `new`. If Stripe can determine that the bank account exists, its status will be `validated`. Note that there often isn't enough information to know (e.g., for smaller credit unions), and the validation is not always run. If customer bank account verification has succeeded, the bank account status will be `verified`. If the verification failed for any reason, such as microdeposit failure, the status will be `verification_failed`. If a transfer sent to this bank account fails, we'll set the status to `errored` and will not continue to send transfers until the bank details are updated.
-//
-// For external accounts, possible values are `new` and `errored`. Validations aren't run against external accounts because they're only used for payouts. This means the other statuses don't apply. If a transfer fails, the status is set to `errored` and transfers are stopped until account details are updated.
-type BankAccountStatus string
-
-// List of values that BankAccountStatus can take
-const (
-	BankAccountStatusErrored            BankAccountStatus = "errored"
-	BankAccountStatusNew                BankAccountStatus = "new"
-	BankAccountStatusValidated          BankAccountStatus = "validated"
-	BankAccountStatusVerificationFailed BankAccountStatus = "verification_failed"
-	BankAccountStatusVerified           BankAccountStatus = "verified"
 )
 
 // Updates the metadata, account holder name, account holder type of a bank account belonging to a [Custom account](https://stripe.com/docs/connect/custom-accounts), and optionally sets it as the default for its currency. Other bank account details are not editable by design.
@@ -60,31 +37,17 @@ type BankAccountParams struct {
 	AccountHolderName *string `form:"account_holder_name"`
 	// The type of entity that holds the account. This can be either `individual` or `company`.
 	AccountHolderType *string `form:"account_holder_type"`
-	AccountNumber     *string `form:"account_number"`
+	// The account number for the bank account, in string form. Must be a checking account.
+	AccountNumber *string `form:"account_number"`
 	// The bank account type. This can only be `checking` or `savings` in most countries. In Japan, this can only be `futsu` or `toza`.
 	AccountType *string `form:"account_type"`
-	// City/District/Suburb/Town/Village.
-	AddressCity *string `form:"address_city"`
-	// Billing address country, if provided when creating card.
-	AddressCountry *string `form:"address_country"`
-	// Address line 1 (Street address/PO Box/Company name).
-	AddressLine1 *string `form:"address_line1"`
-	// Address line 2 (Apartment/Suite/Unit/Building).
-	AddressLine2 *string `form:"address_line2"`
-	// State/County/Province/Region.
-	AddressState *string `form:"address_state"`
-	// ZIP or postal code.
-	AddressZip *string `form:"address_zip"`
-	Country    *string `form:"country"`
-	Currency   *string `form:"currency"`
+	// The country in which the bank account is located.
+	Country *string `form:"country"`
+	// The currency the bank account is in. This must be a country/currency pairing that [Stripe supports.](https://stripe.com/docs/payouts)
+	Currency *string `form:"currency"`
 	// When set to true, this becomes the default external account for its currency.
 	DefaultForCurrency *bool `form:"default_for_currency"`
-	// Two digit number representing the card's expiration month.
-	ExpMonth *string `form:"exp_month"`
-	// Four digit number representing the card's expiration year.
-	ExpYear *string `form:"exp_year"`
-	// Cardholder name.
-	Name          *string `form:"name"`
+	// The routing number, sort code, or other country-appropriate institution number for the bank account. For US bank accounts, this is required and should bethe ACH routing number, not the wire routing number. If you are providing an IBAN for `account_number`, this field is not required.
 	RoutingNumber *string `form:"routing_number"`
 	// ID is used when tokenizing a bank account for shared customers
 	ID *string `form:"*"`
@@ -130,7 +93,6 @@ func (a *BankAccountParams) AppendToAsSourceOrExternalAccount(body *form.Values)
 	} else {
 		body.Add(sourceType+"[object]", "bank_account")
 		body.Add(sourceType+"[country]", StringValue(a.Country))
-		body.Add(sourceType+"[account_number]", StringValue(a.AccountNumber))
 		body.Add(sourceType+"[currency]", StringValue(a.Currency))
 
 		// These are optional and the API will fail if we try to send empty
@@ -185,7 +147,7 @@ type BankAccount struct {
 	// The name of the person or business that owns the bank account.
 	AccountHolderName string `json:"account_holder_name"`
 	// The type of entity that holds the account. This can be either `individual` or `company`.
-	AccountHolderType BankAccountAccountHolderType `json:"account_holder_type"`
+	AccountHolderType string `json:"account_holder_type"`
 	// The bank account type. This can only be `checking` or `savings` in most countries. In Japan, this can only be `futsu` or `toza`.
 	AccountType string `json:"account_type"`
 	// A set of available payout methods for this bank account. Only values from this set should be passed as the `method` when creating a payout.
@@ -216,7 +178,7 @@ type BankAccount struct {
 	// For bank accounts, possible values are `new`, `validated`, `verified`, `verification_failed`, or `errored`. A bank account that hasn't had any activity or validation performed is `new`. If Stripe can determine that the bank account exists, its status will be `validated`. Note that there often isn't enough information to know (e.g., for smaller credit unions), and the validation is not always run. If customer bank account verification has succeeded, the bank account status will be `verified`. If the verification failed for any reason, such as microdeposit failure, the status will be `verification_failed`. If a transfer sent to this bank account fails, we'll set the status to `errored` and will not continue to send transfers until the bank details are updated.
 	//
 	// For external accounts, possible values are `new` and `errored`. Validations aren't run against external accounts because they're only used for payouts. This means the other statuses don't apply. If a transfer fails, the status is set to `errored` and transfers are stopped until account details are updated.
-	Status BankAccountStatus `json:"status"`
+	Status string `json:"status"`
 }
 
 // BankAccountList is a list of BankAccounts as retrieved from a list endpoint.

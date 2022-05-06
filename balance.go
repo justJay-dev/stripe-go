@@ -28,7 +28,7 @@ type BalanceParams struct {
 // Funds that are available to be transferred or paid out, whether automatically by Stripe or explicitly via the [Transfers API](https://stripe.com/docs/api#transfers) or [Payouts API](https://stripe.com/docs/api#payouts). The available balance for each currency and payment type can be found in the `source_types` property.
 type Amount struct {
 	// Balance amount.
-	Value int64 `json:"amount"`
+	Amount int64 `json:"amount"`
 	// Three-letter [ISO currency code](https://www.iso.org/iso-4217-currency-codes.html), in lowercase. Must be a [supported currency](https://stripe.com/docs/currencies).
 	Currency    Currency                    `json:"currency"`
 	SourceTypes map[BalanceSourceType]int64 `json:"source_types"`

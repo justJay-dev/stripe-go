@@ -6,18 +6,6 @@
 
 package stripe
 
-// Type of the token: `account`, `bank_account`, `card`, or `pii`.
-type TokenType string
-
-// List of values that TokenType can take
-const (
-	TokenTypeAccount     TokenType = "account"
-	TokenTypeBankAccount TokenType = "bank_account"
-	TokenTypeCard        TokenType = "card"
-	TokenTypeCVCUpdate   TokenType = "cvc_update"
-	TokenTypePII         TokenType = "pii"
-)
-
 // Retrieves the token with the given ID.
 type TokenParams struct {
 	Params `form:"*"`
@@ -30,13 +18,10 @@ type TokenParams struct {
 	Customer *string `form:"customer"`
 	// The updated CVC value this token will represent.
 	CVCUpdate *TokenCVCUpdateParams `form:"cvc_update"`
-	// Email is an undocumented parameter used by Stripe Checkout
-	// It may be removed from the API without notice.
-	Email *string `form:"email"`
 	// Information for the person this token will represent.
 	Person *PersonParams `form:"person"`
 	// The PII this token will represent.
-	PII *PIIParams `form:"pii"`
+	PII *TokenPIIParams `form:"pii"`
 }
 
 // Information for the account this token will represent.
@@ -58,8 +43,7 @@ type TokenCVCUpdateParams struct {
 }
 
 // The PII this token will represent.
-type PIIParams struct {
-	Params `form:"*"`
+type TokenPIIParams struct {
 	// The `id_number` for the PII, in string form.
 	IDNumber *string `form:"id_number"`
 }
@@ -106,9 +90,6 @@ type Token struct {
 	ClientIP string `json:"client_ip"`
 	// Time at which the object was created. Measured in seconds since the Unix epoch.
 	Created int64 `json:"created"`
-	// Email is an undocumented field but included for all tokens created
-	// with Stripe Checkout.
-	Email string `json:"email"`
 	// Unique identifier for the object.
 	ID string `json:"id"`
 	// Has the value `true` if the object exists in live mode or the value `false` if the object exists in test mode.
@@ -116,7 +97,7 @@ type Token struct {
 	// String representing the object's type. Objects of the same type share the same value.
 	Object string `json:"object"`
 	// Type of the token: `account`, `bank_account`, `card`, or `pii`.
-	Type TokenType `json:"type"`
+	Type string `json:"type"`
 	// Whether this token has already been used (tokens can be used only once).
 	Used bool `json:"used"`
 }

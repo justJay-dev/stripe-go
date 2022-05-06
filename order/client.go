@@ -46,12 +46,12 @@ func (c Client) Get(id string, params *stripe.OrderParams) (*stripe.Order, error
 }
 
 // Update updates an order's properties.
-func Update(id string, params *stripe.OrderUpdateParams) (*stripe.Order, error) {
+func Update(id string, params *stripe.OrderParams) (*stripe.Order, error) {
 	return getC().Update(id, params)
 }
 
 // Update updates an order's properties.
-func (c Client) Update(id string, params *stripe.OrderUpdateParams) (*stripe.Order, error) {
+func (c Client) Update(id string, params *stripe.OrderParams) (*stripe.Order, error) {
 	path := stripe.FormatURLPath("/v1/orders/%s", id)
 	order := &stripe.Order{}
 	err := c.B.Call(http.MethodPost, path, c.Key, params, order)
@@ -71,15 +71,15 @@ func (c Client) Pay(id string, params *stripe.OrderPayParams) (*stripe.Order, er
 	return order, err
 }
 
-// Return is the method for the `POST /v1/orders/{id}/returns` API.
-func Return(id string, params *stripe.OrderReturnParams) (*stripe.OrderReturn, error) {
-	return getC().Return(id, params)
+// ReturnOrder is the method for the `POST /v1/orders/{id}/returns` API.
+func ReturnOrder(id string, params *stripe.OrderReturnParams) (*stripe.Order, error) {
+	return getC().ReturnOrder(id, params)
 }
 
-// Return is the method for the `POST /v1/orders/{id}/returns` API.
-func (c Client) Return(id string, params *stripe.OrderReturnParams) (*stripe.OrderReturn, error) {
+// ReturnOrder is the method for the `POST /v1/orders/{id}/returns` API.
+func (c Client) ReturnOrder(id string, params *stripe.OrderReturnParams) (*stripe.Order, error) {
 	path := stripe.FormatURLPath("/v1/orders/%s/returns", id)
-	order := &stripe.OrderReturn{}
+	order := &stripe.Order{}
 	err := c.B.Call(http.MethodPost, path, c.Key, params, order)
 	return order, err
 }

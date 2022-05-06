@@ -12,17 +12,6 @@ import (
 	"strconv"
 )
 
-// If `address_line1` was provided, results of the check: `pass`, `fail`, `unavailable`, or `unchecked`.
-type CardVerification string
-
-// List of values that CardVerification can take
-const (
-	CardVerificationFail        CardVerification = "fail"
-	CardVerificationPass        CardVerification = "pass"
-	CardVerificationUnavailable CardVerification = "unavailable"
-	CardVerificationUnchecked   CardVerification = "unchecked"
-)
-
 // A set of available payout methods for this card. Only values from this set should be passed as the `method` when creating a payout.
 type CardAvailablePayoutMethod string
 
@@ -31,52 +20,6 @@ const (
 	CardAvailablePayoutMethodInstant  CardAvailablePayoutMethod = "instant"
 	CardAvailablePayoutMethodStandard CardAvailablePayoutMethod = "standard"
 )
-
-// Card brand. Can be `American Express`, `Diners Club`, `Discover`, `JCB`, `MasterCard`, `UnionPay`, `Visa`, or `Unknown`.
-type CardBrand string
-
-// List of values that CardBrand can take
-const (
-	CardBrandAmex       CardBrand = "American Express"
-	CardBrandDiscover   CardBrand = "Discover"
-	CardBrandDinersClub CardBrand = "Diners Club"
-	CardBrandJCB        CardBrand = "JCB"
-	CardBrandMasterCard CardBrand = "MasterCard"
-	CardBrandUnknown    CardBrand = "Unknown"
-	CardBrandUnionPay   CardBrand = "UnionPay"
-	CardBrandVisa       CardBrand = "Visa"
-)
-
-// Card funding type. Can be `credit`, `debit`, `prepaid`, or `unknown`.
-type CardFunding string
-
-// List of values that CardFunding can take
-const (
-	CardFundingCredit  CardFunding = "credit"
-	CardFundingDebit   CardFunding = "debit"
-	CardFundingPrepaid CardFunding = "prepaid"
-	CardFundingUnknown CardFunding = "unknown"
-)
-
-// If the card number is tokenized, this is the method that was used. Can be `android_pay` (includes Google Pay), `apple_pay`, `masterpass`, `visa_checkout`, or null.
-type CardTokenizationMethod string
-
-// List of values that CardTokenizationMethod can take
-const (
-	TokenizationMethodAndroidPay CardTokenizationMethod = "android_pay"
-	TokenizationMethodApplePay   CardTokenizationMethod = "apple_pay"
-)
-
-type CardOwnerParams struct {
-	// Owner's address.
-	Address *AddressParams `form:"address"`
-	// Owner's email address.
-	Email *string `form:"email"`
-	// Owner's full name.
-	Name *string `form:"name"`
-	// Owner's phone number.
-	Phone *string `form:"phone"`
-}
 
 // cardSource is a string that's used to build card form parameters. It's a
 // constant just to make mistakes less likely.
@@ -92,7 +35,6 @@ type CardParams struct {
 	AccountHolderName *string `form:"account_holder_name"`
 	// The type of entity that holds the account. This can be either `individual` or `company`.
 	AccountHolderType *string `form:"account_holder_type"`
-	AccountType       *string `form:"account_type"`
 	// City/District/Suburb/Town/Village.
 	AddressCity *string `form:"address_city"`
 	// Billing address country, if provided when creating card.
@@ -104,18 +46,21 @@ type CardParams struct {
 	// State/County/Province/Region.
 	AddressState *string `form:"address_state"`
 	// ZIP or postal code.
-	AddressZip         *string `form:"address_zip"`
-	Currency           *string `form:"currency"`
-	CVC                *string `form:"cvc"`
-	DefaultForCurrency *bool   `form:"default_for_currency"`
+	AddressZip *string `form:"address_zip"`
+	// This argument is only relevant if you're using Stripe Connect. Required when adding a card to an account (not applicable to customers or recipients). The card (which must be a debit card) can be used as a transfer destination for funds in this currency.
+	Currency *string `form:"currency"`
+	// The card's CVC. It is highly recommended to always include this value.
+	CVC *string `form:"cvc"`
+	// This argument is only relevant if you're using Stripe Connect. Applicable only on accounts (not customers or recipients). If you set this to true (or if this is the first external account being added in this currency), this card will become the default external account for its currency.
+	DefaultForCurrency *bool `form:"default_for_currency"`
 	// Two digit number representing the card's expiration month.
 	ExpMonth *string `form:"exp_month"`
 	// Four digit number representing the card's expiration year.
 	ExpYear *string `form:"exp_year"`
 	// Cardholder name.
-	Name   *string          `form:"name"`
-	Number *string          `form:"number"`
-	Owner  *CardOwnerParams `form:"owner"`
+	Name *string `form:"name"`
+	// The card number, as a string without any separators.
+	Number *string `form:"number"`
 	// ID is used when tokenizing a card for shared customers
 	ID string `form:"*"`
 }
@@ -157,6 +102,7 @@ func (c *CardParams) AppendToAsCardSourceOrExternalAccount(body *form.Values, ke
 		body.Add(form.FormatKey(append(keyParts, cardSource, "object")), "card")
 		body.Add(form.FormatKey(append(keyParts, cardSource, "number")), StringValue(c.Number))
 	}
+
 	if c.CVC != nil {
 		body.Add(
 			form.FormatKey(append(keyParts, cardSource, "cvc")),
@@ -256,7 +202,7 @@ type Card struct {
 	// Address line 1 (Street address/PO Box/Company name).
 	AddressLine1 string `json:"address_line1"`
 	// If `address_line1` was provided, results of the check: `pass`, `fail`, `unavailable`, or `unchecked`.
-	AddressLine1Check CardVerification `json:"address_line1_check"`
+	AddressLine1Check string `json:"address_line1_check"`
 	// Address line 2 (Apartment/Suite/Unit/Building).
 	AddressLine2 string `json:"address_line2"`
 	// State/County/Province/Region.
@@ -264,11 +210,11 @@ type Card struct {
 	// ZIP or postal code.
 	AddressZip string `json:"address_zip"`
 	// If `address_zip` was provided, results of the check: `pass`, `fail`, `unavailable`, or `unchecked`.
-	AddressZipCheck CardVerification `json:"address_zip_check"`
+	AddressZipCheck string `json:"address_zip_check"`
 	// A set of available payout methods for this card. Only values from this set should be passed as the `method` when creating a payout.
 	AvailablePayoutMethods []CardAvailablePayoutMethod `json:"available_payout_methods"`
 	// Card brand. Can be `American Express`, `Diners Club`, `Discover`, `JCB`, `MasterCard`, `UnionPay`, `Visa`, or `Unknown`.
-	Brand CardBrand `json:"brand"`
+	Brand string `json:"brand"`
 	// Two-letter ISO code representing the country of the card. You could use this attribute to get a sense of the international breakdown of cards you've collected.
 	Country string `json:"country"`
 	// Three-letter [ISO code for currency](https://stripe.com/docs/payouts). Only applicable on accounts (not customers or recipients). The card can be used as a transfer destination for funds in this currency.
@@ -276,40 +222,28 @@ type Card struct {
 	// The customer that this card belongs to. This attribute will not be in the card object if the card belongs to an account or recipient instead.
 	Customer *Customer `json:"customer"`
 	// If a CVC was provided, results of the check: `pass`, `fail`, `unavailable`, or `unchecked`. A result of unchecked indicates that CVC was provided but hasn't been checked yet. Checks are typically performed when attaching a card to a Customer object, or when creating a charge. For more details, see [Check if a card is valid without a charge](https://support.stripe.com/questions/check-if-a-card-is-valid-without-a-charge).
-	CVCCheck CardVerification `json:"cvc_check"`
+	CVCCheck string `json:"cvc_check"`
 	// Whether this card is the default external account for its currency.
 	DefaultForCurrency bool `json:"default_for_currency"`
 	Deleted            bool `json:"deleted"`
-	// Description is a succinct summary of the card's information.
-	//
-	// Please note that this field is for internal use only and is not returned
-	// as part of standard API requests.
 	// A high-level description of the type of cards issued in this range. (For internal use only and not typically available in standard API requests.)
 	Description string `json:"description"`
 	// (For tokenized numbers only.) The last four digits of the device account number.
 	DynamicLast4 string `json:"dynamic_last4"`
 	// Two-digit number representing the card's expiration month.
-	ExpMonth uint8 `json:"exp_month"`
+	ExpMonth int64 `json:"exp_month"`
 	// Four-digit number representing the card's expiration year.
-	ExpYear uint16 `json:"exp_year"`
+	ExpYear int64 `json:"exp_year"`
 	// Uniquely identifies this particular card number. You can use this attribute to check whether two customers who've signed up with you are using the same card number, for example. For payment methods that tokenize card information (Apple Pay, Google Pay), the tokenized number might be provided instead of the underlying card number.
 	//
 	// *Starting May 1, 2021, card fingerprint in India for Connect will change to allow two fingerprints for the same card --- one for India and one for the rest of the world.*
 	Fingerprint string `json:"fingerprint"`
 	// Card funding type. Can be `credit`, `debit`, `prepaid`, or `unknown`.
-	Funding CardFunding `json:"funding"`
+	Funding string `json:"funding"`
 	// Unique identifier for the object.
 	ID string `json:"id"`
-	// IIN is the card's "Issuer Identification Number".
-	//
-	// Please note that this field is for internal use only and is not returned
-	// as part of standard API requests.
 	// Issuer identification number of the card. (For internal use only and not typically available in standard API requests.)
 	IIN string `json:"iin"`
-	// Issuer is a bank or financial institution that provides the card.
-	//
-	// Please note that this field is for internal use only and is not returned
-	// as part of standard API requests.
 	// The name of the card's issuing bank. (For internal use only and not typically available in standard API requests.)
 	Issuer string `json:"issuer"`
 	// The last four digits of the card.
@@ -323,7 +257,7 @@ type Card struct {
 	// For external accounts, possible values are `new` and `errored`. If a transfer fails, the status is set to `errored` and transfers are stopped until account details are updated.
 	Status string `json:"status"`
 	// If the card number is tokenized, this is the method that was used. Can be `android_pay` (includes Google Pay), `apple_pay`, `masterpass`, `visa_checkout`, or null.
-	TokenizationMethod CardTokenizationMethod `json:"tokenization_method"`
+	TokenizationMethod string `json:"tokenization_method"`
 }
 
 // CardList is a list of Cards as retrieved from a list endpoint.

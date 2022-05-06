@@ -68,7 +68,6 @@ import (
 	"github.com/stripe/stripe-go/v72/refund"
 	reportingreportrun "github.com/stripe/stripe-go/v72/reporting/reportrun"
 	reportingreporttype "github.com/stripe/stripe-go/v72/reporting/reporttype"
-	"github.com/stripe/stripe-go/v72/reversal"
 	"github.com/stripe/stripe-go/v72/review"
 	"github.com/stripe/stripe-go/v72/setupattempt"
 	"github.com/stripe/stripe-go/v72/setupintent"
@@ -93,6 +92,7 @@ import (
 	"github.com/stripe/stripe-go/v72/token"
 	"github.com/stripe/stripe-go/v72/topup"
 	"github.com/stripe/stripe-go/v72/transfer"
+	"github.com/stripe/stripe-go/v72/transferreversal"
 	"github.com/stripe/stripe-go/v72/usagerecord"
 	"github.com/stripe/stripe-go/v72/usagerecordsummary"
 	"github.com/stripe/stripe-go/v72/webhookendpoint"
@@ -218,8 +218,6 @@ type API struct {
 	ReportRuns *reportingreportrun.Client
 	// ReportTypes is the client used to invoke /reporting/report_types APIs.
 	ReportTypes *reportingreporttype.Client
-	// Reversals is the client used to invoke /transfers/{id}/reversals APIs.
-	Reversals *reversal.Client
 	// Reviews is the client used to invoke /reviews APIs.
 	Reviews *review.Client
 	// SetupAttempts is the client used to invoke /setup_attempts APIs.
@@ -266,6 +264,8 @@ type API struct {
 	Tokens *token.Client
 	// Topups is the client used to invoke /topups APIs.
 	Topups *topup.Client
+	// TransferReversals is the client used to invoke /transfers/{id}/reversals APIs.
+	TransferReversals *transferreversal.Client
 	// Transfers is the client used to invoke /transfers APIs.
 	Transfers *transfer.Client
 	// UsageRecords is the client used to invoke /subscription_items/{subscription_item}/usage_records APIs.
@@ -345,7 +345,6 @@ func (a *API) Init(key string, backends *stripe.Backends) {
 	a.Refunds = &refund.Client{B: backends.API, Key: key}
 	a.ReportRuns = &reportingreportrun.Client{B: backends.API, Key: key}
 	a.ReportTypes = &reportingreporttype.Client{B: backends.API, Key: key}
-	a.Reversals = &reversal.Client{B: backends.API, Key: key}
 	a.Reviews = &review.Client{B: backends.API, Key: key}
 	a.SetupAttempts = &setupattempt.Client{B: backends.API, Key: key}
 	a.SetupIntents = &setupintent.Client{B: backends.API, Key: key}
@@ -369,6 +368,7 @@ func (a *API) Init(key string, backends *stripe.Backends) {
 	a.TestHelpersTestClocks = &testhelperstestclock.Client{B: backends.API, Key: key}
 	a.Tokens = &token.Client{B: backends.API, Key: key}
 	a.Topups = &topup.Client{B: backends.API, Key: key}
+	a.TransferReversals = &transferreversal.Client{B: backends.API, Key: key}
 	a.Transfers = &transfer.Client{B: backends.API, Key: key}
 	a.UsageRecords = &usagerecord.Client{B: backends.API, Key: key}
 	a.UsageRecordSummaries = &usagerecordsummary.Client{B: backends.API, Key: key}
