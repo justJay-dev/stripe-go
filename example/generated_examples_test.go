@@ -57,6 +57,7 @@ import (
 	terminal_connectiontoken "github.com/stripe/stripe-go/v72/terminal/connectiontoken"
 	terminal_location "github.com/stripe/stripe-go/v72/terminal/location"
 	terminal_reader "github.com/stripe/stripe-go/v72/terminal/reader"
+	testhelpers_refund "github.com/stripe/stripe-go/v72/testhelpers/refund"
 	testhelpers_testclock "github.com/stripe/stripe-go/v72/testhelpers/testclock"
 	_ "github.com/stripe/stripe-go/v72/testing"
 	topup "github.com/stripe/stripe-go/v72/topup"
@@ -321,16 +322,6 @@ func TestCustomerList(t *testing.T) {
 	assert.Nil(t, result.Err())
 }
 
-func TestCustomerSearch(t *testing.T) {
-	params := &stripe.CustomerSearchParams{
-		SearchParams: stripe.SearchParams{
-			Query: "name:'fakename' AND metadata['foo']:'bar'",
-		},
-	}
-	iter := customer.Search(params)
-	assert.NotNil(t, result)
-}
-
 func TestChargeCreate(t *testing.T) {
 	params := &stripe.ChargeParams{
 		Amount:      stripe.Int64(2000),
@@ -369,16 +360,6 @@ func TestChargeList(t *testing.T) {
 	assert.Nil(t, result.Err())
 }
 
-func TestChargeSearch(t *testing.T) {
-	params := &stripe.ChargeSearchParams{
-		SearchParams: stripe.SearchParams{
-			Query: "amount>999 AND metadata['order_id']:'6735'",
-		},
-	}
-	iter := charge.Search(params)
-	assert.NotNil(t, result)
-}
-
 func TestCustomerCreate(t *testing.T) {
 	params := &stripe.CustomerParams{
 		Description: stripe.String("My First Test Customer (created for API docs)"),
@@ -412,16 +393,6 @@ func TestCustomerList2(t *testing.T) {
 	result := customer.List(params)
 	assert.NotNil(t, result)
 	assert.Nil(t, result.Err())
-}
-
-func TestCustomerSearch2(t *testing.T) {
-	params := &stripe.CustomerSearchParams{
-		SearchParams: stripe.SearchParams{
-			Query: "name:'fakename' AND metadata['foo']:'bar'",
-		},
-	}
-	iter := customer.Search(params)
-	assert.NotNil(t, result)
 }
 
 func TestDisputeRetrieve(t *testing.T) {
@@ -527,16 +498,6 @@ func TestPaymentIntentIncrementAuthorization(t *testing.T) {
 		Amount: stripe.Int64(2099),
 	}
 	result, _ := paymentintent.IncrementAuthorization("pi_xxxxxxxxxxxxx", params)
-	assert.NotNil(t, result)
-}
-
-func TestPaymentIntentSearch(t *testing.T) {
-	params := &stripe.PaymentIntentSearchParams{
-		SearchParams: stripe.SearchParams{
-			Query: "status:'succeeded' AND metadata['order_id']:'6735'",
-		},
-	}
-	iter := paymentintent.Search(params)
 	assert.NotNil(t, result)
 }
 
@@ -767,16 +728,6 @@ func TestProductDelete(t *testing.T) {
 	assert.NotNil(t, result)
 }
 
-func TestProductSearch(t *testing.T) {
-	params := &stripe.ProductSearchParams{
-		SearchParams: stripe.SearchParams{
-			Query: "active:'true' AND metadata['order_id']:'6735'",
-		},
-	}
-	iter := product.Search(params)
-	assert.NotNil(t, result)
-}
-
 func TestPriceCreate(t *testing.T) {
 	params := &stripe.PriceParams{
 		UnitAmount: stripe.Int64(2000),
@@ -809,16 +760,6 @@ func TestPriceList(t *testing.T) {
 	result := price.List(params)
 	assert.NotNil(t, result)
 	assert.Nil(t, result.Err())
-}
-
-func TestPriceSearch(t *testing.T) {
-	params := &stripe.PriceSearchParams{
-		SearchParams: stripe.SearchParams{
-			Query: "active:'true' AND metadata['order_id']:'6735'",
-		},
-	}
-	iter := price.Search(params)
-	assert.NotNil(t, result)
 }
 
 func TestCouponCreate(t *testing.T) {
@@ -1203,16 +1144,6 @@ func TestInvoiceList(t *testing.T) {
 	result := invoice.List(params)
 	assert.NotNil(t, result)
 	assert.Nil(t, result.Err())
-}
-
-func TestInvoiceSearch(t *testing.T) {
-	params := &stripe.InvoiceSearchParams{
-		SearchParams: stripe.SearchParams{
-			Query: "total>999 AND metadata['order_id']:'6735'",
-		},
-	}
-	iter := invoice.Search(params)
-	assert.NotNil(t, result)
 }
 
 func TestInvoiceItemCreate(t *testing.T) {
